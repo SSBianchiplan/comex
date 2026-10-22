@@ -1,0 +1,128 @@
+# GPlanSiS|COMEX — PostgreSQL 16 + Keycloak 26 + API FastAPI + PWA (nginx), atrás do Traefik
+name: gplansis-comex
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gpscomex
+      POSTGRES_USER: ${DB_USER:-comex}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      API_DB_PASSWORD: ${API_DB_PASSWORD:?defina API_DB_PASSWORD no .env}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?defina KC_DB_PASSWORD no .env}
+      TZ: America/Sao_Paulo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/001_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+      - ./db/002_regras.sql:/docker-entrypoint-initdb.d/002_regras.sql:ro
+      - ./db/003_referencia.sql:/docker-entrypoint-initdb.d/003_referencia.sql:ro
+      - ./db/004_usuario_api.sh:/docker-entrypoint-initdb.d/004_usuario_api.sh:ro
+      - ./db/005_keycloak_db.sh:/docker-entrypoint-initdb.d/005_keycloak_db.sh:ro
+      - ./db/090_redteam.sql:/redteam/090_redteam.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d gpscomex"]
+      interval: 5s
+      retries: 20
+    networks: [interna]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    restart: unless-stopped
+    command: ["start", "--import-realm"]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_HOSTNAME: ${KC_URL:-https://auth.comex.localhost}
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USER:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:?defina KC_ADMIN_PASSWORD no .env}
+      COMEX_URL: ${COMEX_URL:-https://comex.localhost}            # usado no realm (redirect URIs)
+      COMEX_SENHA_DEMO: ${COMEX_SENHA_DEMO:?defina COMEX_SENHA_DEMO no .env}  # senha temporária dos usuários demo
+      COMEX_SENHA_ADMIN: ${COMEX_SENHA_ADMIN:?defina COMEX_SENHA_ADMIN no .env}  # senha temporária do admin master
+      COMEX_ADMIN_EMAIL: ${COMEX_ADMIN_EMAIL:-admin@exemplo.com}  # login do admin master (realm)
+      COMEX_ADMIN_API_SECRET: ${KC_ADMIN_SECRET:?defina KC_ADMIN_SECRET no .env}  # segredo do cliente comex-admin-api
+    volumes:
+      - ./keycloak/realm-gplansis.json:/opt/keycloak/data/import/realm-gplansis.json:ro
+      - ./keycloak/themes/gplansis:/opt/keycloak/themes/gplansis:ro   # tema de login no desenho do PWA
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+      interval: 10s
+      retries: 30
+      start_period: 60s
+    networks: [interna, proxy]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-proxy}
+      - traefik.http.routers.comex-auth.rule=Host(`${KC_HOST:-auth.comex.localhost}`)
+      - traefik.http.routers.comex-auth.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.comex-auth.tls=true
+      - traefik.http.routers.comex-auth.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      # console administrativo só a partir das faixas de IP permitidas
+      - traefik.http.routers.comex-auth-admin.rule=Host(`${KC_HOST:-auth.comex.localhost}`) && (PathPrefix(`/admin`) || PathPrefix(`/realms/master`))
+      - traefik.http.routers.comex-auth-admin.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.comex-auth-admin.tls=true
+      - traefik.http.routers.comex-auth-admin.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      - traefik.http.routers.comex-auth-admin.middlewares=comex-admin-ip
+      - traefik.http.middlewares.comex-admin-ip.ipallowlist.sourcerange=${ADMIN_IP_ALLOW:-127.0.0.1/32}
+      - traefik.http.services.comex-auth.loadbalancer.server.port=8080
+
+  seed:            # roda uma vez: carrega os 3 projetos demo pelo fluxo real (idempotente)
+    build: ./api
+    command: ["python", "-m", "app.seed"]
+    environment:
+      DATABASE_URL: postgresql://comex_api:${API_DB_PASSWORD}@db:5432/gpscomex
+    depends_on:
+      db: { condition: service_healthy }
+    restart: "no"
+    networks: [interna]
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://comex_api:${API_DB_PASSWORD}@db:5432/gpscomex
+      AUTH_MODE: ${AUTH_MODE:-oidc}
+      OIDC_ISSUER: ${KC_URL:-https://auth.comex.localhost}/realms/gplansis
+      OIDC_JWKS_URL: http://keycloak:8080/realms/gplansis/protocol/openid-connect/certs
+      OIDC_AUDIENCE: comex-api
+      OIDC_CLIENT_WEB: comex-web
+      KC_INTERNO_URL: http://keycloak:8080          # Admin API do Keycloak (gestão de usuários)
+      KC_ADMIN_SECRET: ${KC_ADMIN_SECRET}
+      WEB_DIR: /nao-servir      # o nginx serve o frontend
+    depends_on:
+      db: { condition: service_healthy }
+      seed: { condition: service_completed_successfully }
+      keycloak: { condition: service_healthy }
+    networks: [interna]
+
+  web:
+    build: ./web
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ORIGIN: ${KC_URL:-https://auth.comex.localhost}
+    depends_on:
+      api: { condition: service_healthy }
+    networks: [interna, proxy]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-proxy}
+      - traefik.http.routers.comex.rule=Host(`${DOMINIO:-comex.localhost}`)
+      - traefik.http.routers.comex.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.comex.tls=true
+      - traefik.http.routers.comex.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}
+      - traefik.http.services.comex.loadbalancer.server.port=80
+
+volumes:
+  pgdata:
+
+networks:
+  interna:
+  proxy:
+    external: true
+    name: ${TRAEFIK_NETWORK:-proxy}

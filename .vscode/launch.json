@@ -1,0 +1,78 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "COMEX: API + frontend, sem login (F5)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/api",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "WEB_DIR": "${workspaceFolder}/web",
+        "AUTH_MODE": "desligado"
+      },
+      "jinja": false,
+      "justMyCode": true,
+      "serverReadyAction": {
+        "pattern": "Uvicorn running on (https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "COMEX: API + frontend com login (Keycloak local)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/api",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "WEB_DIR": "${workspaceFolder}/web",
+        "AUTH_MODE": "oidc"
+      },
+      "jinja": false,
+      "justMyCode": true,
+      "serverReadyAction": {
+        "pattern": "Uvicorn running on (https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "COMEX: semear 3 demos",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app.seed",
+      "cwd": "${workspaceFolder}/api",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "COMEX: testes da API (pytest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-q",
+        "tests"
+      ],
+      "cwd": "${workspaceFolder}/api",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "API_URL": "http://localhost:8000"
+      }
+    }
+  ]
+}

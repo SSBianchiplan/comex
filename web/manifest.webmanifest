@@ -1,0 +1,24 @@
+{
+  "name": "GPlanSiS|COMEX — Comércio exterior",
+  "short_name": "COMEX",
+  "description": "Exportação de painéis elétricos: embalagem, estufagem, cotação por Incoterm, cronograma e rastreabilidade em ledger.",
+  "lang": "pt-BR",
+  "id": "./",
+  "start_url": "./app.html?origem=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#121517",
+  "theme_color": "#2D3336",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Cronograma", "url": "./app.html?aba=cron", "icons": [{"src": "icons/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Estufagem", "url": "./app.html?aba=estuf", "icons": [{"src": "icons/icon-192.png", "sizes": "192x192"}]}
+  ]
+}

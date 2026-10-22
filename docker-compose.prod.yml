@@ -1,0 +1,31 @@
+# Produção no servidor (hub gplansis.com), atrás do Caddy do host — sem Traefik.
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# O Keycloak fica na mesma origem do app, em https://comex.gplansis.com/auth (dispensa DNS próprio).
+# O Caddy (deploy/comex.caddy) manda /auth/* para 127.0.0.1:8931 e o resto para o nginx em 127.0.0.1:8933.
+# O console administrativo do Keycloak não é publicado: abra por túnel SSH em http://localhost:8931/auth/admin/
+services:
+  keycloak:
+    environment:
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HOSTNAME: ${COMEX_URL:-https://comex.gplansis.com}/auth
+      KC_HOSTNAME_ADMIN: http://localhost:8931/auth
+      JAVA_OPTS_KC_HEAP: -Xms256m -Xmx768m
+    ports: ["127.0.0.1:8931:8080"]
+    labels: []
+    networks: [interna]
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /auth/health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+  api:
+    environment:
+      OIDC_ISSUER: ${COMEX_URL:-https://comex.gplansis.com}/auth/realms/gplansis
+      OIDC_JWKS_URL: http://keycloak:8080/auth/realms/gplansis/protocol/openid-connect/certs
+      KC_INTERNO_URL: http://keycloak:8080/auth
+  web:
+    environment:
+      KEYCLOAK_ORIGIN: ${COMEX_URL:-https://comex.gplansis.com}
+    ports: ["127.0.0.1:8933:80"]
+    labels: []
+    networks: [interna]
+networks:
+  proxy:
+    external: false

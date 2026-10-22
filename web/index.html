@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GPlanSiS|COMEX · exportação planejada de trás para frente, com prova</title>
+<meta name="description" content="Planejamento e rastreabilidade de exportação de painéis elétricos: embalagem ISPM-15, estufagem de contêiner, cotação por Incoterm 2020, cronograma reverso e ledger EPCIS encadeado por SHA-256.">
+<meta name="theme-color" content="#2D3336">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="GPlanSiS|COMEX — exportação com prova">
+<meta property="og:description" content="Do painel na fábrica ao contêiner no navio: embalagem, estufagem, frete por Incoterm, cronograma e ledger auditável.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#EB6A20;--brand2:#C4531A;--amber:#F6A709;--graf:#2D3336;--graf2:#22282B;--graf3:#1A1F21;--steel:#7D8286;
+  --bg:#EDEFF1;--panel:#FFFFFF;--panel2:#F5F6F7;--ink:#1B2023;--muted:#5F666B;--line:#DCE0E3;--line2:#E8EBED;
+  --ok:#276B44;--okbg:#DFEFE5;--warn:#8A5A00;--warnbg:#FDF1D5;--bad:#B3341D;--badbg:#F8E2DC;
+  --wood:#D8B47A;--wood2:#B98E4E;
+  --f:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--fc:'Barlow Condensed','Arial Narrow',sans-serif;--fm:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --r:10px;--sh:0 1px 2px rgba(0,0,0,.06),0 10px 30px rgba(0,0,0,.08);--wrap:1180px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121517;--panel:#1B2023;--panel2:#22292D;--ink:#E8EBED;--muted:#9AA0A4;--line:#2E363B;--line2:#262C30;
+  --ok:#6BC08E;--okbg:#15301F;--warn:#F2B64A;--warnbg:#372A0E;--bad:#EF7A63;--badbg:#3A1D17;--sh:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{--bg:#121517;--panel:#1B2023;--panel2:#22292D;--ink:#E8EBED;--muted:#9AA0A4;--line:#2E363B;--line2:#262C30;--ok:#6BC08E;--okbg:#15301F;--warn:#F2B64A;--warnbg:#372A0E;--bad:#EF7A63;--badbg:#3A1D17}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+.eyebrow{font:600 12.5px var(--fm);letter-spacing:1.4px;text-transform:uppercase;color:var(--brand)}
+h1,h2,h3{font-family:var(--fc);letter-spacing:.2px;line-height:1.08;margin:0}
+h2{font-size:clamp(30px,4.2vw,46px);font-weight:700}
+h3{font-size:21px;font-weight:700}
+p{margin:0}
+.lead{font-size:clamp(17px,1.6vw,19.5px);color:var(--muted);max-width:660px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:8px;font:700 15.5px var(--f);text-decoration:none;border:1px solid transparent;cursor:pointer;white-space:nowrap;transition:transform .12s,background .12s,border-color .12s;min-height:48px}
+.btn:hover{transform:translateY(-1px)}
+.btn.pri{background:var(--brand);color:#fff;box-shadow:0 6px 20px rgba(235,106,32,.35)}
+.btn.pri:hover{background:var(--brand2)}
+.btn.ghost{border-color:rgba(255,255,255,.28);color:#fff}
+.btn.ghost:hover{border-color:rgba(255,255,255,.6)}
+.btn svg{width:18px;height:18px}
+.btn.sm{padding:8px 14px;font-size:14px;min-height:38px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--graf) 94%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid rgba(255,255,255,.07);padding-top:env(safe-area-inset-top,0px)}
+.nav .wrap{display:flex;align-items:center;gap:24px;height:62px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;min-width:0}
+.logo .mk{width:34px;height:34px;border-radius:9px;background:#3A4246;display:grid;place-items:center;flex:none}
+.logo .wm{font:700 19px var(--fc);white-space:nowrap}.logo .wm b{color:var(--brand);margin:0 1px;font-weight:400}
+.nav .links{display:flex;gap:22px;margin-left:auto}
+.nav .links a{color:#C9CCCE;text-decoration:none;font-weight:500;font-size:14.5px}
+.nav .links a:hover{color:#fff}
+.menu{display:none;margin-left:auto;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:7px;width:42px;height:40px;cursor:pointer}
+.menu svg{margin:auto;width:20px;height:20px}
+
+/* HERO */
+.hero{background:radial-gradient(900px 480px at 85% -10%,rgba(235,106,32,.28),transparent 60%),radial-gradient(700px 420px at 0% 110%,rgba(246,167,9,.12),transparent 60%),linear-gradient(180deg,var(--graf) 0%,var(--graf3) 100%);color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,#000 30%,transparent 95%);-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 95%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:48px;align-items:center;padding-top:76px;padding-bottom:84px}
+.hero h1{font-size:clamp(40px,5.6vw,66px);font-weight:700;margin:14px 0 18px}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero .lead{color:#C4C8CA}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:26px;font-size:13.5px;color:#A8ADB0}
+.trust span{display:inline-flex;align-items:center;gap:7px}
+.trust i{width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block}
+
+/* MOCK do app */
+.mock{background:#F5F6F7;color:#1B2023;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.06);overflow:hidden;transform:perspective(1600px) rotateY(-6deg) rotateX(2deg);transform-origin:left center}
+.mock .bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#2D3336;color:#C9CCCE;font:500 11px var(--fm)}
+.mock .bar i{width:9px;height:9px;border-radius:50%;background:#555D61;display:inline-block}
+.mock .bar span{margin-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mock .mn{padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.mock .chip{display:flex;align-items:center;gap:8px;font:600 11px var(--fm);flex-wrap:wrap}
+.mock .chip b{font:700 14px var(--fc);letter-spacing:.3px}
+.mock .chip u{text-decoration:none;background:#EB6A20;color:#fff;border-radius:10px;padding:1px 8px;font-size:10px}
+.mock .chip s{text-decoration:none;color:#6A7075;font-weight:500}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.kp div{background:#fff;border:1px solid #E1E4E6;border-radius:7px;padding:7px 8px;min-width:0}
+.kp div.l{border-left:3px solid #EB6A20}.kp div.w{border-left:3px solid #F6A709}.kp div.o{border-left:3px solid #276B44}
+.kp small{display:block;font:600 8.5px var(--f);text-transform:uppercase;letter-spacing:.5px;color:#6A7075;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kp strong{font:700 17px var(--fc);white-space:nowrap}
+.cardm{background:#fff;border:1px solid #E1E4E6;border-radius:7px;padding:8px;min-width:0}
+.cardm h6{margin:0 0 6px;font:700 10px var(--fc);text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;gap:8px}
+.cardm h6 em{font-style:normal;color:#276B44}
+.row2{display:grid;grid-template-columns:1.25fr 1fr;gap:8px}
+.chain{display:flex;flex-direction:column;gap:4px}
+.chain div{display:flex;align-items:center;gap:7px;font:500 9.5px var(--fm);padding:5px 6px;border:1px solid #E1E4E6;border-radius:5px;background:#fff;min-width:0}
+.chain div.d{background:#DFEFE5;border-color:#BFDCC9}
+.chain em{font-style:normal;width:15px;height:15px;border-radius:50%;background:#2D3336;color:#fff;display:grid;place-items:center;font-size:8px;flex:none}
+.chain div.d em{background:#276B44}
+.chain b{margin-left:auto;color:#6A7075;font-weight:500}
+.mockcap{margin-top:12px;font-size:12px;color:#8C9296;text-align:center}
+
+/* NÚMEROS */
+.nums{background:var(--graf3);color:#fff;border-top:1px solid rgba(255,255,255,.06)}
+.nums .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-top:26px;padding-bottom:26px}
+.nums div{padding:6px 18px;border-left:1px solid rgba(255,255,255,.08)}
+.nums div:first-child{border-left:0}
+.nums b{display:block;font:700 34px var(--fc);color:var(--amber);line-height:1.05}
+.nums span{font-size:14px;color:#AEB3B6}
+
+/* SEÇÕES */
+section{padding:96px 0}
+.sh{max-width:780px;margin-bottom:44px}
+.sh h2{margin:10px 0 14px}
+.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pain{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.pain .n{font:700 44px var(--fc);color:var(--line);line-height:1}
+.pain h3{margin:10px 0 8px}
+.pain p{color:var(--muted);font-size:15.5px}
+.pain .fix{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:14.5px;color:var(--ink)}
+.pain .fix b{color:var(--brand)}
+
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mod{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;transition:border-color .15s,transform .15s,box-shadow .15s}
+.mod:hover{border-color:color-mix(in srgb,var(--brand) 45%,var(--line));transform:translateY(-2px);box-shadow:var(--sh)}
+.mod .top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.mod .ic{width:42px;height:42px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,var(--panel));color:var(--brand);flex:none}
+.mod .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mod .tag{margin-left:auto;font:600 11px var(--fm);color:var(--warn);border:1px solid color-mix(in srgb,var(--amber) 50%,var(--line));border-radius:4px;padding:1px 6px;white-space:nowrap}
+.mod p{color:var(--muted);font-size:15px}
+.mod ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.mod li{display:flex;gap:8px;align-items:flex-start}
+.mod li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);margin-top:8px;flex:none}
+
+.dark{background:linear-gradient(180deg,var(--graf) 0%,var(--graf3) 100%);color:#fff}
+.dark .lead{color:#B7BCBF}
+.rules{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.rule{border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:20px;background:rgba(255,255,255,.03)}
+.rule .lk{width:34px;height:34px;border-radius:8px;background:rgba(235,106,32,.16);color:var(--brand);display:grid;place-items:center;margin-bottom:12px}
+.rule .lk svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rule h3{font-size:19px;margin-bottom:6px}
+.rule p{font-size:14px;color:#B7BCBF}
+.rule code{display:inline-block;margin-top:10px;font:600 11px var(--fm);color:var(--amber)}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.inc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--sh);min-width:0}
+.inc .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;font-size:14px}
+.inc .seg{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 4px}
+.inc .seg button{font:600 13px var(--fm);border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer;min-height:34px}
+.inc .seg button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.pill{display:inline-flex;align-items:center;padding:1px 8px;border-radius:10px;font:600 11.5px var(--f)}
+.p-v{background:color-mix(in srgb,var(--brand) 14%,var(--panel));color:var(--brand2)}.p-c{background:var(--line2);color:var(--muted)}
+table.t{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+.t th{font:600 11px var(--f);text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+.t td{padding:7px 6px;border-bottom:1px solid var(--line2)}
+.t td:last-child,.t th:last-child{text-align:right}
+.inc .tot{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-weight:600;font-size:14.5px}
+.inc .tot b{font:700 20px var(--fc);color:var(--brand)}
+.checks{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-direction:column;gap:12px}
+.checks li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.checks svg{width:22px;height:22px;color:var(--ok);flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;counter-reset:s}
+.fl{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;position:relative}
+.fl::before{counter-increment:s;content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--graf);color:#fff;display:grid;place-items:center;font:700 14px var(--fm);margin-bottom:14px}
+.fl h3{font-size:19px;margin-bottom:6px}
+.fl p{font-size:14.5px;color:var(--muted)}
+.padroes{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.padroes span{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-weight:600;font-size:14.5px}
+.padroes span small{font:500 11px var(--fm);color:var(--muted)}
+
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sc{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.sc h3{margin-bottom:8px}
+.sc p{color:var(--muted);font-size:15px}
+.papeis{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.papeis span{font:600 11px var(--fm);border:1px solid var(--line);border-radius:4px;padding:3px 8px;text-transform:uppercase;letter-spacing:.4px}
+
+.faq{max-width:860px}
+.faq details{border-bottom:1px solid var(--line);padding:4px 0}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:16px 0;font:700 19px var(--fc)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 24px var(--f);color:var(--brand);flex:none;transition:transform .15s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{color:var(--muted);padding:0 0 18px;max-width:760px}
+
+.final{background:radial-gradient(700px 360px at 50% 0%,rgba(235,106,32,.3),transparent 65%),linear-gradient(180deg,var(--graf) 0%,var(--graf3) 100%);color:#fff;text-align:center}
+.final h2{max-width:820px;margin:12px auto 16px}
+.final .lead{color:#B7BCBF;margin:0 auto}
+.final .ctas{justify-content:center}
+.final small{display:block;margin-top:18px;color:#8C9296;font-size:13px}
+
+footer{background:var(--graf3);color:#8C9296;font-size:13.5px;border-top:1px solid rgba(255,255,255,.06)}
+footer .wrap{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding-top:22px;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+footer .logo .wm{font-size:16px}
+footer nav{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+footer a{text-decoration:none}footer a:hover{color:#fff}
+
+@media (max-width:1060px){
+  .rules{grid-template-columns:repeat(3,1fr)}
+  .flow{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:920px){
+  .hero .wrap{grid-template-columns:1fr;padding-top:52px;padding-bottom:60px;gap:40px}
+  .mock{transform:none}
+  .pains,.mods,.seg3{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr;gap:32px}
+  .nums .wrap{grid-template-columns:1fr 1fr;gap:16px 0}
+  .nums div:nth-child(3){border-left:0}
+  .nav .links{display:none}
+  .nav .links.aberto{display:flex;position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;background:var(--graf);border-bottom:1px solid rgba(255,255,255,.08);padding:6px 16px 12px}
+  .nav .links.aberto a{padding:12px 4px;font-size:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .menu{display:grid}
+  .nav .wrap{gap:12px}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  section{padding:64px 0}
+  .pains,.mods,.seg3,.rules,.flow{grid-template-columns:1fr}
+  .kp{grid-template-columns:repeat(2,1fr)}
+  .row2{grid-template-columns:1fr}
+  .ctas .btn{flex:1 1 100%}
+  .nav .entrar{display:none}
+  .nums b{font-size:28px}
+  .nums div{padding:6px 12px}
+  footer nav{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.mod{transition:none}.btn:hover,.mod:hover{transform:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="12.5" rx="1.6" fill="#EB6A20"/><path d="M6.2 9.6v7.3M10.5 9.6v7.3M14.8 9.6v7.3" stroke="#2D3336" stroke-opacity=".42" stroke-width="1.4" stroke-linecap="round" fill="none"/><circle cx="18.6" cy="6.6" r="4.6" fill="#F6A709" stroke="#2D3336" stroke-width="1.3"/><path d="M16.8 8.4l3.4-3.4M17.5 5h2.7v2.7" fill="none" stroke="#2D3336" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="seta" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.6"/></symbol>
+  <symbol id="cad" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="./" aria-label="GPlanSiS|COMEX, início"><span class="mk"><svg width="22" height="22"><use href="#logo"/></svg></span><span class="wm">GPlanSiS<b>|</b>COMEX</span></a>
+    <nav class="links" id="links" aria-label="Seções">
+      <a href="#funcionalidades">Funcionalidades</a><a href="#regras">Regras</a><a href="#incoterm">Incoterm</a><a href="#como">Como funciona</a><a href="#seguranca">Segurança</a><a href="#duvidas">Dúvidas</a>
+    </nav>
+    <a class="btn pri sm entrar" href="app.html">Entrar</a>
+    <button class="menu" id="menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Exportação · ISPM-15 · Incoterms 2020 · GS1 EPCIS</span>
+      <h1 id="h1">Do painel na fábrica ao contêiner no navio, <em>cada embarque com prova.</em></h1>
+      <p class="lead">O GPlanSiS|COMEX calcula embalagem, estufagem, frete por Incoterm e o cronograma até a entrega. Cada etapa vira um bloco de um ledger encadeado por SHA-256, e o banco recusa o que quebra a regra: estufar sem cotação aprovada, contêiner acima do payload, documento trocado sem nova versão.</p>
+      <div class="ctas">
+        <a class="btn pri" href="app.html">Entrar no sistema <svg><use href="#seta"/></svg></a>
+        <a class="btn ghost" href="app.html?demo=1">Ver demonstração sem login</a>
+      </div>
+      <div class="trust"><span><i></i>Celular, tablet e desktop</span><span><i></i>Instalável como aplicativo</span><span><i></i>Login único GPlanSiS</span></div>
+    </div>
+    <div>
+      <div class="mock" role="img" aria-label="Tela do COMEX: embarque CMX-26-0147 para Houston com volumes, peso, contêineres, cronograma e ledger">
+        <div class="bar"><i></i><i></i><i></i><span>comex.gplansis.com · Visão geral</span></div>
+        <div class="mn">
+          <div class="chip"><b>CMX-26-0147</b><s>→ Houston, EUA</s><u>DAP</u></div>
+          <div class="kp">
+            <div class="l"><small>Volumes</small><strong>21</strong></div>
+            <div><small>Peso bruto</small><strong>23,96 t</strong></div>
+            <div class="w"><small>Equipamentos</small><strong>40OT + 40HC</strong></div>
+            <div class="o"><small>ETD Navegantes</small><strong>qui 05/11</strong></div>
+          </div>
+          <div class="row2">
+            <div class="cardm"><h6>Plano de estufagem · 40HC <em>CG ok</em></h6>
+              <svg viewBox="0 0 300 92" aria-hidden="true">
+                <rect x="1" y="1" width="298" height="90" rx="4" fill="#fff" stroke="#2D3336" stroke-width="1.5"/>
+                <rect x="6" y="6" width="70" height="38" fill="#2D3336"/><rect x="6" y="48" width="70" height="38" fill="#2D3336"/>
+                <rect x="80" y="6" width="54" height="80" fill="#B3B9BD"/><rect x="138" y="6" width="44" height="38" fill="#F6C35A"/>
+                <rect x="138" y="48" width="44" height="38" fill="#F6C35A"/><rect x="186" y="6" width="62" height="54" fill="#D8B47A"/>
+                <rect x="186" y="64" width="30" height="22" fill="#B98E4E"/><rect x="220" y="64" width="28" height="22" fill="#B98E4E"/>
+                <path d="M252 4v84" stroke="#EB6A20" stroke-dasharray="3 3"/><text x="256" y="50" font-size="9" fill="#6A7075" font-family="monospace">porta</text>
+              </svg>
+            </div>
+            <div class="cardm"><h6>Ledger EPCIS <em>íntegro</em></h6>
+              <div class="chain">
+                <div class="d"><em>1</em>PEDIDO<b>9f3a…c1</b></div>
+                <div class="d"><em>2</em>COTAÇÃO APROVADA<b>77be…04</b></div>
+                <div><em>3</em>FAT<b>próximo</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="mockcap">Tela real do sistema com um dos embarques de demonstração</p>
+    </div>
+  </div>
+</section>
+
+<div class="nums" aria-label="Números do sistema">
+  <div class="wrap">
+    <div><b>12</b><span>etapas rastreadas, do pedido à entrega</span></div>
+    <div><b>29</b><span>regras garantidas pelo banco de dados</span></div>
+    <div><b>11</b><span>Incoterms 2020 com a divisão de custos</span></div>
+    <div><b>11</b><span>documentos com versão e hash</span></div>
+  </div>
+</div>
+
+<section aria-labelledby="dor">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">O problema</span>
+      <h2 id="dor">Exportar painel elétrico em planilha custa caro no porto.</h2>
+      <p class="lead">A cubagem está numa aba, o frete em outra, o cronograma no e-mail e a prova de quem liberou o quê em lugar nenhum.</p>
+    </div>
+    <div class="pains">
+      <div class="pain"><div class="n">01</div><h3>Contêiner errado no booking</h3><p>O CCM de 2.300 mm não passa na porta do 40' Dry e só se descobre na estufagem. Sobre-altura vira Open Top às pressas, com frete e prazo novos.</p>
+        <p class="fix"><b>No COMEX:</b> a porta, o piso, o payload e o centro de gravidade são verificados antes de reservar, e o sistema sugere o equipamento certo.</p></div>
+      <div class="pain"><div class="n">02</div><h3>Incoterm que ninguém releu</h3><p>A proposta sai em DAP, mas o custo foi calculado como FCA. O seguro, o THC de destino e o frete interno ficam na conta de quem vende.</p>
+        <p class="fix"><b>No COMEX:</b> cada componente de custo é atribuído ao vendedor ou ao comprador conforme o Incoterm 2020 escolhido.</p></div>
+      <div class="pain"><div class="n">03</div><h3>Documento sem prova</h3><p>Qual versão da fatura foi para o cliente? Quem aprovou o frete? Quando o contêiner foi lacrado? A resposta depende de alguém lembrar.</p>
+        <p class="fix"><b>No COMEX:</b> cada etapa é um bloco do ledger, com usuário, hora e o SHA-256 dos documentos vigentes naquele momento.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="funcionalidades" aria-labelledby="fun" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">Funcionalidades</span>
+      <h2 id="fun">Da lista de equipamentos ao eBL, num sistema só.</h2>
+      <p class="lead">Seis módulos que conversam entre si: alterar um painel recalcula a embalagem, os contêineres, o frete e o cronograma na hora.</p>
+    </div>
+    <div class="mods">
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3 3 7.5l9 4.5 9-4.5z"/><path d="M3 7.5v9L12 21l9-4.5v-9"/><path d="M12 12v9"/></svg></span><h3>Carga e embalagem</h3><span class="tag">ISPM-15</span></div>
+        <p>Cada painel vira volumes por seção, com caixa, skid e barreira calculados a partir das dimensões e do peso.</p>
+        <ul><li>Caixa de madeira HT com carimbo IPPC</li><li>Etiqueta SSCC GS1 com dígito verificador</li><li>Dessecante por volume e barreira de alumínio</li></ul></article>
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 17h18l-2.5 4h-13z"/><path d="M5 17v-6h14v6"/><path d="M8 11V7h5v4M12 4v3"/></svg></span><h3>Estufagem de contêiner</h3><span class="tag">ISO 6346</span></div>
+        <p>O plano de estufagem distribui os volumes entre 20', 40', 40HC, Open Top e Flat Rack, com vista de topo e lateral.</p>
+        <ul><li>Porta, piso, payload e empilhamento</li><li>Centro de gravidade dentro de 15 %</li><li>Número de contêiner e lacre validados</li></ul></article>
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/><path d="M12 14h5M12 17h3"/></svg></span><h3>Cotação por Incoterm</h3><span class="tag">2020</span></div>
+        <p>Frete marítimo, THC, BAF, seguro, despacho e tributos de destino, separados entre vendedor e comprador.</p>
+        <ul><li>Tarifas por rota com vigência</li><li>Seguro sobre 110 % do CIF</li><li>Aprovação humana com nome e hora</li></ul></article>
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 14v3l2 1"/></svg></span><h3>Cronograma reverso</h3><span class="tag">ETD</span></div>
+        <p>Parte da data de entrega no cliente e volta até a cotação: booking, FAT, embalagem, estufagem, cut-off, VGM e ETD.</p>
+        <ul><li>Dias úteis e feriados nacionais</li><li>4 semanas de antecedência para OT e FR</li><li>Alerta de marco vencido e de folga</li></ul></article>
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14M14 17.5h-4a3 3 0 0 1-3-3V10"/></svg></span><h3>Rastreabilidade em ledger</h3><span class="tag">EPCIS 2.0</span></div>
+        <p>Doze etapas do pedido à entrega, cada uma um evento GS1 EPCIS encadeado por SHA-256 e verificado pelo banco.</p>
+        <ul><li>Tabela append-only: sem UPDATE nem DELETE</li><li>Raiz de Merkle dos volumes na estufagem</li><li>Verificação da cadeia com um toque</li></ul></article>
+      <article class="mod"><div class="top"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span><h3>Documentos e compliance</h3><span class="tag">SHA-256</span></div>
+        <p>Fatura, packing list, NF-e/DU-E, certificado de origem, VGM, eBL, seguro e desembaraço, com o responsável definido pelo Incoterm.</p>
+        <ul><li>Versões imutáveis com hash no banco</li><li>Download só se o hash conferir</li><li>Packing list em CSV pronto para o despachante</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="regras" aria-labelledby="reg">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">Regras garantidas pelo banco</span>
+      <h2 id="reg">Regras que ninguém consegue pular.</h2>
+      <p class="lead">A tela avisa, mas quem decide é o PostgreSQL. Uma bateria de ataque tenta violar cada regra direto no banco, e todas resistem.</p>
+    </div>
+    <div class="rules">
+      <div class="rule"><span class="lk"><svg viewBox="0 0 24 24"><use href="#cad"/></svg></span><h3>Estufar só com frete aprovado</h3><p>Sem cotação aprovada por alguém identificado, o contêiner não é estufado.</p><code>INV-CMX-022</code></div>
+      <div class="rule"><span class="lk"><svg viewBox="0 0 24 24"><use href="#cad"/></svg></span><h3>Quem aprova não estufa</h3><p>Aprovar exige o papel comercial e registrar etapa exige o de logística, sempre em nome de quem está logado.</p><code>INV-CMX-024/025</code></div>
+      <div class="rule"><span class="lk"><svg viewBox="0 0 24 24"><use href="#cad"/></svg></span><h3>Carga congela após embalar</h3><p>Depois de embalado, itens, volumes, rota e alocação não mudam mais.</p><code>INV-CMX-010/012</code></div>
+      <div class="rule"><span class="lk"><svg viewBox="0 0 24 24"><use href="#cad"/></svg></span><h3>Ledger não se reescreve</h3><p>Hash e sequência são calculados pelo banco, e a aplicação não tem permissão de alterar nem apagar blocos.</p><code>INV-CMX-008</code></div>
+      <div class="rule"><span class="lk"><svg viewBox="0 0 24 24"><use href="#cad"/></svg></span><h3>Arquivo não é trocado</h3><p>Anexo novo vira nova versão. Um executável renomeado para .pdf é recusado pela assinatura do conteúdo.</p><code>INV-CMX-026/028</code></div>
+    </div>
+  </div>
+</section>
+
+<section id="incoterm" aria-labelledby="inc">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Cotação por Incoterm</span>
+      <h2 id="inc" style="margin:10px 0 14px">Quem paga cada linha, antes de mandar a proposta.</h2>
+      <p class="lead">Troque o Incoterm e veja o custo do vendedor mudar. É a mesma conta que o sistema faz para cada embarque, com as tarifas vigentes da rota.</p>
+      <ul class="checks">
+        <li><svg><use href="#ok"/></svg>Frete, THC, BAF/EFS, ISPS e sobre-dimensão por contêiner</li>
+        <li><svg><use href="#ok"/></svg>Tributos de destino calculados à parte, conforme o NCM</li>
+        <li><svg><use href="#ok"/></svg>Uma única cotação aprovada por embarque, e ela não muda mais</li>
+      </ul>
+    </div>
+    <div class="inc" aria-live="polite">
+      <div class="hd"><b>CMX-26-0147</b><span class="pill p-c">Navegantes → Houston</span><span class="pill p-c">1×40OT + 1×40HC</span></div>
+      <div class="seg" role="group" aria-label="Incoterm" id="incSeg">
+        <button data-i="FCA">FCA</button><button data-i="CPT">CPT</button><button data-i="CIP">CIP</button><button data-i="DAP" aria-pressed="true">DAP</button><button data-i="DDP">DDP</button>
+      </div>
+      <table class="t"><thead><tr><th>Componente</th><th>Quem paga</th><th>USD</th></tr></thead><tbody id="incT"></tbody></table>
+      <div class="tot"><span>Custo do vendedor em <span id="incN">DAP</span></span><b id="incV"></b></div>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:8px">Valores calculados pelo motor do COMEX para o embarque de demonstração, com tarifas indicativas. Em DDP o vendedor assume até os tributos de destino. Confirme o frete com o NVOCC ou armador antes de fechar preço.</p>
+    </div>
+  </div>
+</section>
+
+<section id="como" aria-labelledby="com" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">Como funciona</span>
+      <h2 id="com">Cinco passos do pedido ao cliente.</h2>
+      <p class="lead">O embarque nasce em rascunho e avança uma etapa por vez. Cada passo libera o próximo.</p>
+    </div>
+    <div class="flow">
+      <div class="fl"><h3>Cadastre o pedido</h3><p>Cliente, destino, Incoterm, data de entrega e os painéis, ou copie de outro embarque.</p></div>
+      <div class="fl"><h3>Calcule</h3><p>Volumes, caixas ISPM-15, contêineres e cronograma saem na hora e se atualizam a cada alteração.</p></div>
+      <div class="fl"><h3>Aprove o frete</h3><p>O comercial aprova a cotação com o próprio login. Sem isso, nada é estufado.</p></div>
+      <div class="fl"><h3>Registre as etapas</h3><p>FAT, embalagem, estufagem, DU-E, gate-in e embarque, cada uma um bloco do ledger.</p></div>
+      <div class="fl"><h3>Entregue com prova</h3><p>Documentos versionados e ancorados no ledger, verificáveis por qualquer pessoa com acesso.</p></div>
+    </div>
+    <div class="padroes" aria-label="Padrões usados">
+      <span>ISPM-15 <small>embalagem</small></span><span>Incoterms® 2020 <small>ICC</small></span><span>GS1 SSCC <small>volumes</small></span><span>GS1 EPCIS 2.0 <small>eventos</small></span><span>ISO 6346 <small>contêiner</small></span><span>SOLAS VGM <small>peso</small></span><span>DCSA eBL <small>B/L</small></span>
+    </div>
+  </div>
+</section>
+
+<section id="seguranca" aria-labelledby="seg" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">Segurança</span>
+      <h2 id="seg">Cada ação tem dono, e o dono vem do login.</h2>
+    </div>
+    <div class="seg3">
+      <div class="sc"><h3>Acesso por perfil</h3><p>Leitura consulta, logística opera a carga, comercial cria embarques e aprova cotações. O administrador cria usuários e define os papéis pelo próprio app.</p>
+        <div class="papeis"><span>Leitura</span><span>Logística</span><span>Comercial</span><span>Administração</span></div></div>
+      <div class="sc"><h3>Login único</h3><p>Entrada pelo login GPlanSiS (OpenID Connect com PKCE), troca de senha obrigatória no primeiro acesso e bloqueio após tentativas erradas.</p></div>
+      <div class="sc"><h3>Trilha que não se apaga</h3><p>O aprovador, o assinante e o horário vêm do token e do servidor, não do formulário. O banco recusa ação em nome de outra pessoa.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="duvidas" aria-labelledby="duv" style="padding-top:0">
+  <div class="wrap">
+    <div class="sh"><span class="eyebrow">Dúvidas</span><h2 id="duv">As perguntas da primeira conversa.</h2></div>
+    <div class="faq">
+      <details><summary>Posso testar sem criar conta?</summary><p>Sim. A demonstração abre três embarques de exemplo (Houston, San Antonio e Rotterdam) em estágios diferentes e roda no navegador, com as mesmas regras. Nada do que você fizer nela vai para o banco.</p></details>
+      <details><summary>Funciona no celular?</summary><p>Funciona em celular, tablet e desktop, e pode ser instalado como aplicativo pelo navegador. No iPhone, use Compartilhar e depois "Adicionar à Tela de Início".</p></details>
+      <details><summary>Os valores de frete são reais?</summary><p>São estimativas indicativas por rota, com período de vigência. Servem para planejar e comparar Incoterms. Antes de fechar preço, confirme com o NVOCC ou o armador.</p></details>
+      <details><summary>Serve para qualquer carga?</summary><p>O motor foi calibrado para painéis elétricos e equipamentos industriais em caixa de madeira: CCM, QGBT, média tensão, PLC, remotas e sobressalentes. Dimensões, peso e empilhamento são configuráveis por item.</p></details>
+      <details><summary>Como os usuários são criados?</summary><p>O administrador cria cada usuário pelo próprio app, com o e-mail como login e uma senha temporária que precisa ser trocada no primeiro acesso. Os papéis podem ser alterados a qualquer momento, e desativar um usuário encerra as sessões dele.</p></details>
+      <details><summary>O que acontece se alguém tentar alterar um registro antigo?</summary><p>O banco recusa. O ledger só aceita novos blocos, e cada bloco guarda o hash do anterior. A verificação refaz a conta e mostra em qual bloco a cadeia quebraria.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="cta">
+  <div class="wrap">
+    <span class="eyebrow">GPlanSiS|COMEX</span>
+    <h2 id="cta">Seu próximo embarque planejado de trás para frente, e com prova.</h2>
+    <p class="lead">Entre com sua conta GPlanSiS, ou abra a demonstração e veja um embarque real do pedido ao eBL.</p>
+    <div class="ctas">
+      <a class="btn pri" href="app.html">Entrar no sistema <svg><use href="#seta"/></svg></a>
+      <a class="btn ghost" href="app.html?demo=1">Abrir a demonstração</a>
+    </div>
+    <small>Ainda não tem acesso? Peça ao administrador do COMEX na sua empresa.</small>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="./"><span class="mk"><svg width="20" height="20"><use href="#logo"/></svg></span><span class="wm">GPlanSiS<b>|</b>COMEX</span></a>
+    <span>Comércio exterior e logística de exportação</span>
+    <nav aria-label="Rodapé"><a href="app.html">Entrar</a><a href="#funcionalidades">Funcionalidades</a><a href="https://gplansis.com">gplansis.com</a><span>© 2026</span></nav>
+  </div>
+</footer>
+
+<script>
+// menu no celular
+const menu=document.getElementById('menu'), links=document.getElementById('links');
+menu.addEventListener('click',()=>{const a=links.classList.toggle('aberto'); menu.setAttribute('aria-expanded',a);});
+links.addEventListener('click',e=>{if(e.target.tagName==='A'){links.classList.remove('aberto'); menu.setAttribute('aria-expanded','false');}});
+
+// simulador de Incoterm: mesma divisão do motor (web/app.html, INCOTERMS), valores do embarque demo CMX-26-0147
+const LINHAS=[['emb','Embalagem ISPM-15',7473],['carg','Estufagem, peação e lacre',745],['rodo','Rodoviário até Portonave',1137],['despE','Despacho e DU-E',373],['thcO','THC na origem',892],['frete','Frete marítimo + BAF/ISPS/OOG',12031],['seg','Seguro (110 % CIF)',3743],['thcD','THC no destino',1550],['entrega','Rodoviário até o cliente',3750],['despI','Despacho de importação',850],['trib','Tributos de importação (EUA)',542298]];
+const VEND={FCA:['emb','carg','despE'],CPT:['emb','carg','rodo','despE','thcO','frete'],CIP:['emb','carg','rodo','despE','thcO','frete','seg'],
+            DAP:['emb','carg','rodo','despE','thcO','frete','seg','thcD','entrega'],DDP:['emb','carg','rodo','despE','thcO','frete','seg','thcD','entrega','despI','trib']};
+const usd=v=>'US$ '+v.toLocaleString('pt-BR');
+function incoterm(i){
+  const v=VEND[i]; let tot=0;
+  document.getElementById('incT').innerHTML=LINHAS.map(([k,n,val])=>{const e=v.includes(k); if(e) tot+=val;
+    return `<tr><td>${n}</td><td><span class="pill ${e?'p-v':'p-c'}">${e?'vendedor':'comprador'}</span></td><td>${val.toLocaleString('pt-BR')}</td></tr>`;}).join('');
+  document.getElementById('incN').textContent=i; document.getElementById('incV').textContent=usd(tot);
+  document.querySelectorAll('#incSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.i===i));
+}
+document.getElementById('incSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) incoterm(b.dataset.i);});
+incoterm('DAP');
+
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+/* GPlanSiS|COMEX — login no mesmo desenho do PWA (tokens de web/index.html).
+   Claro e escuro seguem o sistema: o template do keycloak.v2 põe .pf-v5-theme-dark no <html>. */
+:root{
+  --bg:#EDEFF1; --surface:#FFFFFF; --surface2:#F5F6F7; --ink:#1B2023; --ink2:#475054; --muted:#6C7479;
+  --line:#DCE0E3; --line2:#C2C7CB; --brand:#EB6A20; --brand2:#C4531A; --brand-soft:#FCE6D9;
+  --crit:#B3341D; --crit-bg:#F8E2DC; --ok:#276B44; --ok-bg:#DFEFE5; --amber:#F6A709; --amber-bg:#FDF1D5;
+  --rail:#2D3336; --shadow:0 1px 2px rgba(27,32,35,.06),0 4px 14px rgba(27,32,35,.06);
+  --r2:8px; --r3:14px;
+  --ff:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --ffc:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+}
+html.pf-v5-theme-dark{
+  --bg:#121517; --surface:#1B2023; --surface2:#22292D; --ink:#E8EBED; --ink2:#B6BDC1; --muted:#8C9498;
+  --line:#2E363B; --line2:#434D53; --brand-soft:#3D2416; --crit:#EF7A63; --crit-bg:#3A1D17; --ok:#6BC08E; --ok-bg:#15301F;
+  --amber-bg:#372A0E; --rail:#0C0F10; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.25);
+}
+
+/* PatternFly → tokens do sistema */
+:root,html.pf-v5-theme-dark{
+  --pf-v5-global--FontFamily--text:var(--ff); --pf-v5-global--FontFamily--heading:var(--ffc);
+  --pf-v5-global--primary-color--100:var(--brand); --pf-v5-global--primary-color--200:var(--brand2);
+  --pf-v5-global--link--Color:var(--brand2); --pf-v5-global--link--Color--hover:var(--brand);
+  --pf-v5-global--Color--100:var(--ink); --pf-v5-global--Color--200:var(--muted);
+  --pf-v5-global--BackgroundColor--100:var(--surface); --pf-v5-global--BorderRadius--sm:var(--r2);
+  --pf-v5-global--active-color--100:var(--brand); --pf-v5-global--BorderColor--100:var(--line2);
+  --pf-v5-c-button--m-primary--BackgroundColor:var(--brand); --pf-v5-c-button--m-primary--hover--BackgroundColor:var(--brand2);
+  --pf-v5-c-button--m-primary--focus--BackgroundColor:var(--brand2); --pf-v5-c-button--m-primary--active--BackgroundColor:var(--brand2);
+  --pf-v5-c-button--m-primary--Color:#fff; --pf-v5-c-button--BorderRadius:var(--r2);
+  --pf-v5-c-button--m-secondary--Color:var(--ink); --pf-v5-c-button--m-secondary--BorderColor:var(--line2);
+  --pf-v5-c-button--m-secondary--hover--Color:var(--ink); --pf-v5-c-button--m-secondary--hover--BorderColor:var(--brand);
+  --pf-v5-c-form-control--BorderRadius:var(--r2);
+  --pf-v5-c-form-control--before--BorderColor:var(--line2); --pf-v5-c-form-control--after--BorderColor:transparent;
+  --pf-v5-c-form-control--hover--after--BorderBottomColor:var(--brand); --pf-v5-c-form-control--focus--after--BorderBottomColor:var(--brand);
+  --pf-v5-c-form-control--BackgroundColor:var(--surface); --pf-v5-c-form-control--Color:var(--ink);
+  --pf-v5-c-form__label--Color:var(--ink2); --pf-v5-c-check__label--Color:var(--ink2);
+  --pf-v5-c-login__main--BackgroundColor:var(--surface);
+}
+
+html,.login-pf body,body#keycloak-bg{background:var(--bg)!important; background-image:none!important; color:var(--ink); font-family:var(--ff); min-height:100%}
+.pf-v5-c-login{min-height:100vh; min-height:100dvh; padding:32px 16px calc(24px + env(safe-area-inset-bottom,0px)); display:grid; place-items:center; background:none}
+.pf-v5-c-login__container{grid-template-columns:minmax(0,440px)!important; grid-template-areas:"header" "main" "footer"!important; width:100%; max-width:440px; padding:0!important; margin:0 auto; gap:0}
+
+/* Marca: logo + GPlanSiS|COMEX, como no trilho do app */
+.gps-marca{display:flex!important; align-items:center; justify-content:center; gap:12px; padding:0 0 20px!important; margin:0!important; grid-area:header}
+.gps-logo{width:48px; height:48px; border-radius:12px; background:var(--rail); display:grid; place-items:center; flex:none}
+.pf-v5-theme-dark .gps-logo{background:#22292D; border:1px solid var(--line2)}
+.gps-nome,#kc-header-wrapper.gps-nome{font-family:var(--ffc)!important; font-weight:700; font-size:1.9rem!important; letter-spacing:0!important; text-transform:none!important; line-height:1.05!important; color:var(--ink)!important; text-align:left!important}
+.gps-nome small{display:block; font-family:var(--ff); font-weight:500; font-size:.8125rem; color:var(--muted); letter-spacing:0; margin-top:2px}
+.gps-pipe{color:var(--brand); font-weight:400; margin:0 2px}
+
+/* Cartão */
+.pf-v5-c-login__main{grid-area:main; background:var(--surface)!important; border:1px solid var(--line); border-radius:var(--r3)!important; box-shadow:var(--shadow); margin:0!important; overflow:hidden}
+.pf-v5-c-login__main-header{padding:24px 24px 4px!important; display:flex!important; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px}
+.pf-v5-c-login__main-body{padding:12px 24px 24px!important}
+.pf-v5-c-login__main-footer{padding:0 24px!important}
+.pf-v5-c-login__main-footer:empty{display:none}
+#kc-page-title{font-family:var(--ffc)!important; font-weight:700; font-size:1.6rem!important; color:var(--ink); margin:0; line-height:1.15}
+.pf-v5-c-login__main-header-utilities{margin:0!important}
+.pf-v5-c-login__main-header-utilities .pf-v5-c-form-control{min-width:0; width:auto}
+.pf-v5-c-login__main-header-utilities .pf-v5-c-form-control{min-height:36px}
+.pf-v5-c-login__main-header-utilities select{font-size:.8125rem!important; padding:4px 34px 4px 12px!important; min-height:34px}
+.pf-v5-c-login__main-header-utilities .pf-v5-c-form-control__utilities{right:10px}
+
+/* Campos e botões com a altura do app (toque ≥ 44 px) */
+.pf-v5-c-form{gap:14px}
+.pf-v5-c-form__label{font-size:.75rem!important; font-weight:500; color:var(--ink2)}
+.pf-v5-c-form-control{border:1px solid var(--line2)!important; border-radius:var(--r2)!important; min-height:44px; background:var(--surface)!important}
+.pf-v5-c-form-control::before,.pf-v5-c-form-control::after{border:0!important}
+.pf-v5-c-form-control:focus-within{border-color:var(--brand)!important; box-shadow:0 0 0 3px var(--brand-soft)}
+.pf-v5-c-form-control>input:focus,.pf-v5-c-form-control>select:focus,.pf-v5-c-form-control>input:focus-visible{outline:none!important; box-shadow:none!important}
+.pf-v5-c-form-control>input,.pf-v5-c-form-control>select{border:0!important; font-size:.9375rem!important; color:var(--ink)!important; background:transparent!important}
+.pf-v5-c-input-group{gap:6px}
+.pf-v5-c-button.pf-m-control{border:1px solid var(--line2)!important; border-radius:var(--r2)!important; min-height:44px; background:var(--surface)!important; color:var(--ink2)!important}
+.pf-v5-c-button.pf-m-control::after{border:0!important}
+.pf-v5-c-button{font-family:var(--ff); font-weight:600; min-height:44px; border-radius:var(--r2)!important}
+.pf-v5-c-button.pf-m-primary{background:var(--brand)!important; color:#fff!important; font-size:1rem}
+.pf-v5-c-button.pf-m-primary:hover,.pf-v5-c-button.pf-m-primary:focus{background:var(--brand2)!important}
+.pf-v5-c-button.pf-m-secondary{background:var(--surface)!important; color:var(--ink)!important}
+.pf-v5-c-button.pf-m-secondary::after{border:1px solid var(--line2)!important; border-radius:var(--r2)!important}
+.pf-v5-c-button.pf-m-link,a{color:var(--brand2)}
+.pf-v5-theme-dark .pf-v5-c-button.pf-m-link,.pf-v5-theme-dark a{color:#F28A4E}
+#kc-form-buttons{margin-top:6px}
+
+/* Avisos no padrão .aviso do app */
+.pf-v5-c-alert{border:0!important; border-left:4px solid var(--amber)!important; background:var(--amber-bg)!important; border-radius:0 var(--r2) var(--r2) 0!important; box-shadow:none!important; padding:10px 14px!important}
+.pf-v5-c-alert::before{display:none}
+.pf-v5-c-alert.pf-m-danger{border-left-color:var(--crit)!important; background:var(--crit-bg)!important}
+.pf-v5-c-alert.pf-m-success{border-left-color:var(--ok)!important; background:var(--ok-bg)!important}
+.pf-v5-c-alert__title{color:var(--ink)!important; font-weight:500}
+.pf-v5-c-helper-text__item-text.pf-m-error{color:var(--crit)!important}
+
+.gps-rodape{grid-area:footer; text-align:center; color:var(--muted); font-size:.75rem; margin:16px 0 0}
+.pf-v5-c-login__footer{display:none}
+
+@media (max-width:480px){
+  .pf-v5-c-login{padding-top:24px; place-items:start center}
+  .gps-nome{font-size:1.65rem!important}
+  .pf-v5-c-login__main-header{padding:20px 18px 4px!important}
+  .pf-v5-c-login__main-body{padding:10px 18px 20px!important}
+  #kc-page-title{font-size:1.4rem!important}
+}
+input[type=checkbox]{accent-color:var(--brand)}

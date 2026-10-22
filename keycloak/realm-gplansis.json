@@ -1,0 +1,215 @@
+{
+  "realm": "gplansis",
+  "displayName": "GPlanSiS",
+  "loginTheme": "gplansis",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "resetPasswordAllowed": true,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "passwordPolicy": "length(10) and notUsername(undefined)",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "pt-BR",
+    "en"
+  ],
+  "defaultLocale": "pt-BR",
+  "roles": {
+    "realm": [
+      {
+        "name": "comex-leitura",
+        "description": "COMEX — consulta de embarques, cotações, cronograma e ledger"
+      },
+      {
+        "name": "comex-logistica",
+        "description": "COMEX — edita carga e embalagem, registra eventos do ledger e emite documentos"
+      },
+      {
+        "name": "comex-comercial",
+        "description": "COMEX — cria embarques e clientes e aprova cotações"
+      },
+      {
+        "name": "comex-admin",
+        "description": "COMEX — todos os papéis"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "comex-web",
+      "name": "GPlanSiS|COMEX — aplicativo web (PWA)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "redirectUris": [
+        "${COMEX_URL:http://localhost:8080}/*",
+        "http://localhost:8000/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "basic"
+      ],
+      "protocolMappers": [
+        {
+          "name": "audiencia-comex-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "comex-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "comex-api",
+      "name": "GPlanSiS|COMEX — API (audiência do token)",
+      "enabled": true,
+      "bearerOnly": true,
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "comex-admin-api",
+      "name": "GPlanSiS|COMEX — gerenciador de usuários (API)",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${COMEX_ADMIN_API_SECRET:troque-no-env}",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "${COMEX_ADMIN_EMAIL:admin@exemplo.com}",
+      "email": "${COMEX_ADMIN_EMAIL:admin@exemplo.com}",
+      "firstName": "Administrador",
+      "lastName": "COMEX",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "comex-admin",
+        "comex-leitura",
+        "comex-logistica",
+        "comex-comercial"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${COMEX_SENHA_ADMIN:Trocar-no-1o-acesso}",
+          "temporary": true
+        }
+      ],
+      "requiredActions": [
+        "UPDATE_PASSWORD"
+      ]
+    },
+    {
+      "username": "comercial.demo",
+      "email": "comercial.demo@exportador.demo",
+      "firstName": "Carla",
+      "lastName": "Comercial",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "comex-comercial",
+        "comex-leitura"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${COMEX_SENHA_DEMO:Trocar-no-1o-acesso}",
+          "temporary": true
+        }
+      ],
+      "requiredActions": [
+        "UPDATE_PASSWORD"
+      ]
+    },
+    {
+      "username": "logistica.demo",
+      "email": "logistica.demo@exportador.demo",
+      "firstName": "Lucas",
+      "lastName": "Logística",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "comex-logistica",
+        "comex-leitura"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${COMEX_SENHA_DEMO:Trocar-no-1o-acesso}",
+          "temporary": true
+        }
+      ],
+      "requiredActions": [
+        "UPDATE_PASSWORD"
+      ]
+    },
+    {
+      "username": "leitura.demo",
+      "email": "leitura.demo@exportador.demo",
+      "firstName": "Lia",
+      "lastName": "Leitura",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "comex-leitura"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${COMEX_SENHA_DEMO:Trocar-no-1o-acesso}",
+          "temporary": true
+        }
+      ],
+      "requiredActions": [
+        "UPDATE_PASSWORD"
+      ]
+    },
+    {
+      "username": "service-account-comex-admin-api",
+      "enabled": true,
+      "serviceAccountClientId": "comex-admin-api",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users",
+          "view-realm"
+        ]
+      }
+    }
+  ]
+}

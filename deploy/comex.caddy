@@ -1,0 +1,35 @@
+# =============================================================================
+#  GPlanSiS|COMEX — comex.gplansis.com
+#  Importado pelo /etc/caddy/Caddyfile. Bloco próprio: não toca em outro site.
+#
+#  /auth/*  → Keycloak (127.0.0.1:8931), mesma origem do app.
+#             Console admin e realm master NÃO são publicados (use túnel SSH).
+#  resto    → nginx do PWA (127.0.0.1:8933), que já envia CSP/HSTS e faz /api.
+# =============================================================================
+
+comex.gplansis.com {
+	import seguranca_hub
+	encode zstd gzip
+
+	@kcadmin path /auth/admin /auth/admin/* /auth/realms/master /auth/realms/master/*
+	handle @kcadmin {
+		respond 404
+	}
+
+	handle /auth/* {
+		reverse_proxy 127.0.0.1:8931 {
+			header_up X-Forwarded-Proto https
+			header_up X-Forwarded-Host {host}
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8933 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	log {
+		output file /var/log/caddy/comex.log
+	}
+}

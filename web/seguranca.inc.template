@@ -1,0 +1,7 @@
+# Cabeçalhos de segurança — incluídos no server e em TODA location que tenha add_header
+# (no nginx, um add_header na location anula os herdados do server)
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Content-Type-Options nosniff always;
+add_header Referrer-Policy strict-origin-when-cross-origin always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' ${KEYCLOAK_ORIGIN} https://fonts.googleapis.com https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${KEYCLOAK_ORIGIN}; manifest-src 'self'; worker-src 'self'" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;

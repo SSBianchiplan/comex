@@ -1,0 +1,10 @@
+{
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}/api",
+  "python.testing.pytestArgs": ["tests"],
+  "files.associations": { "*.webmanifest": "json" },
+  "sqltools.connections": [
+    { "name": "COMEX local (dono do schema)", "driver": "PostgreSQL", "server": "localhost", "port": 5433,
+      "database": "gpscomex", "username": "comex", "askForPassword": true }
+  ]
+}

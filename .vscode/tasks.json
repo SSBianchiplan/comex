@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "COMEX: subir banco e Keycloak locais (5433 e 8180)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d db seed keycloak",
+      "problemMatcher": []
+    },
+    {
+      "label": "COMEX: subir sistema completo (http://localhost:8080)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build",
+      "problemMatcher": []
+    },
+    {
+      "label": "COMEX: parar",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml down",
+      "problemMatcher": []
+    },
+    {
+      "label": "COMEX: RED-TEAM do banco",
+      "type": "shell",
+      "command": "docker compose exec -T db sh -c 'psql -U \"$POSTGRES_USER\" -d gpscomex -f /redteam/090_redteam.sql'",
+      "problemMatcher": []
+    },
+    {
+      "label": "COMEX: recriar banco do zero (DESTRUTIVO)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f docker-compose.local.yml down -v && docker compose -f docker-compose.yml -f docker-compose.local.yml up -d db seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "COMEX: instalar dependências Python",
+      "type": "shell",
+      "command": "python -m pip install -r api/requirements.txt -r api/requirements-dev.txt",
+      "problemMatcher": []
+    }
+  ]
+}

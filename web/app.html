@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GPlanSiS|COMEX — Comércio exterior e logística de exportação</title>
+<meta name="description" content="Logística de exportação de painéis elétricos: embalagem, estufagem, frete, cronograma e rastreabilidade.">
+<meta name="theme-color" content="#2D3336" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121517" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COMEX">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Allerta+Stencil&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS ===== */
+:root{
+  --bg:#EDEFF1; --surface:#FFFFFF; --surface2:#F5F6F7; --surface3:#E6E9EB;
+  --ink:#1B2023; --ink2:#475054; --muted:#6C7479; --line:#DCE0E3; --line2:#C2C7CB;
+  --brand:#EB6A20; --brand2:#C4531A; --brand-soft:#FCE6D9; --amber:#F6A709; --amber-bg:#FDF1D5; --amber-ink:#744D00;
+  --crit:#B3341D; --crit-bg:#F8E2DC; --ok:#276B44; --ok-bg:#DFEFE5;
+  --rail:#2D3336; --rail2:#394044; --rail-ink:#E9ECEE; --rail-muted:#9BA2A6;
+  --graphite:#2D3336; --steel:#7D8286;
+  --wood:#D8B47A; --wood2:#B98E4E; --woodink:#3B2A12;
+  --cargo-a:#B3B9BD; --cargo-b:#2D3336; --cargo-b-ink:#FFFFFF; --cargo-c:#F6C35A;
+  --shadow:0 1px 2px rgba(27,32,35,.06),0 4px 14px rgba(27,32,35,.06);
+  --fs-xs:.75rem; --fs-s:.8125rem; --fs-m:.9375rem; --fs-l:1.125rem; --fs-xl:1.5rem; --fs-xxl:2.125rem;
+  --r1:4px; --r2:8px; --r3:14px;
+  --ff:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --ffc:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --ffs:'Allerta Stencil','Arial Black',Impact,sans-serif;
+  --top-h:60px; --bot-h:64px; --rail-w:236px;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px); --sar:env(safe-area-inset-right,0px);
+  box-sizing:border-box; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121517; --surface:#1B2023; --surface2:#22292D; --surface3:#2A3237;
+  --ink:#E8EBED; --ink2:#B6BDC1; --muted:#8C9498; --line:#2E363B; --line2:#434D53;
+  --brand-soft:#3D2416; --amber-bg:#372A0E; --amber-ink:#F6C35A; --crit:#EF7A63; --crit-bg:#3A1D17; --ok:#6BC08E; --ok-bg:#15301F;
+  --rail:#0C0F10; --rail2:#1A1F22; --graphite:#0C0F10; --status:#232A2E; --status-bd:#343D42;
+  --wood:#8A6A3B; --wood2:#6E522B; --woodink:#F4E6CC; --cargo-a:#5C656A; --cargo-b:#D5DADD; --cargo-b-ink:#111416; --cargo-c:#A07818;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.25); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121517; --surface:#1B2023; --surface2:#22292D; --surface3:#2A3237;
+  --ink:#E8EBED; --ink2:#B6BDC1; --muted:#8C9498; --line:#2E363B; --line2:#434D53;
+  --brand-soft:#3D2416; --amber-bg:#372A0E; --amber-ink:#F6C35A; --crit:#EF7A63; --crit-bg:#3A1D17; --ok:#6BC08E; --ok-bg:#15301F;
+  --rail:#0C0F10; --rail2:#1A1F22; --graphite:#0C0F10; --status:#232A2E; --status-bd:#343D42;
+  --wood:#8A6A3B; --wood2:#6E522B; --woodink:#F4E6CC; --cargo-a:#5C656A; --cargo-b:#D5DADD; --cargo-b-ink:#111416; --cargo-c:#A07818;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.25); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{height:100%; scroll-padding-top:calc(var(--sat) + var(--top-h) + 8px)}
+body{margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:var(--ff); font-size:var(--fs-m); line-height:1.45; -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+a{color:var(--brand2)} :root[data-theme="dark"] a{color:var(--amber)}
+.num,td.n,th.n{font-variant-numeric:tabular-nums}
+svg.ic{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none}
+
+/* ===== CASCA ===== */
+.shell{display:grid; grid-template-columns:var(--rail-w) minmax(0,1fr); min-height:100vh}
+.rail{background:var(--rail); color:var(--rail-ink); position:sticky; top:0; height:100vh; display:flex; flex-direction:column; padding:calc(var(--sat) + 16px) 12px calc(var(--sab) + 16px) calc(var(--sal) + 12px); z-index:30}
+.marca{display:flex; align-items:center; gap:10px; padding:4px 8px 18px; font-family:var(--ffc); font-weight:700; font-size:1.18rem; letter-spacing:0; color:#fff; min-width:0}
+.marca .txt{min-width:0; line-height:1.1}
+.marca .logo{width:34px; height:34px; border-radius:9px; background:#3A4246; display:grid; place-items:center; flex:none}
+.marca .pipe{font-style:normal; color:var(--brand); margin:0 1px; font-weight:400}
+.marca small{display:block; font-family:var(--ff); font-weight:500; font-size:var(--fs-xs); color:var(--rail-muted); letter-spacing:0}
+#nav{display:flex; flex-direction:column; gap:2px}
+#nav button{display:flex; align-items:center; gap:12px; width:100%; border:0; background:transparent; color:var(--rail-muted); padding:10px 12px; border-radius:var(--r2); cursor:pointer; font-weight:500; text-align:left; min-height:44px; position:relative}
+#nav button:hover{background:var(--rail2); color:var(--rail-ink)}
+#nav button[aria-current="page"]{background:var(--rail2); color:#fff}
+#nav button[aria-current="page"]::before{content:''; position:absolute; left:-12px; top:9px; bottom:9px; width:4px; border-radius:0 4px 4px 0; background:var(--brand)}
+#nav button[aria-current="page"] svg{color:var(--brand)}
+#nav .sub{display:block; font-size:var(--fs-xs); color:var(--rail-muted); font-weight:400}
+.rail-pe{margin-top:auto; display:flex; flex-direction:column; gap:8px; padding:0 4px}
+.rail-pe .btn-rail{display:flex; align-items:center; gap:10px; border:1px solid #454D52; background:transparent; color:var(--rail-ink); border-radius:var(--r2); padding:8px 12px; cursor:pointer; min-height:40px; font-size:var(--fs-s)}
+.rail-pe .btn-rail:hover{background:var(--rail2)}
+.rail-pe .btn-rail.pri{background:var(--brand); border-color:var(--brand); color:#fff}
+
+.corpo{min-width:0; display:flex; flex-direction:column}
+.topo{position:sticky; top:0; z-index:25; background:color-mix(in srgb,var(--bg) 88%,transparent); backdrop-filter:saturate(1.4) blur(10px); -webkit-backdrop-filter:saturate(1.4) blur(10px); border-bottom:1px solid var(--line); padding:calc(var(--sat) + 10px) calc(var(--sar) + 24px) 10px 24px; display:flex; align-items:center; gap:12px; min-height:calc(var(--top-h) + var(--sat))}
+.topo .marca-m{display:none}
+.chip-ctx{display:flex; align-items:center; gap:10px; border:1px solid var(--line2); background:var(--surface); border-radius:999px; padding:6px 14px 6px 8px; cursor:pointer; min-height:40px; min-width:0; max-width:100%; box-shadow:var(--shadow)}
+.chip-ctx .ref{font-family:var(--ffc); font-weight:600; font-size:var(--fs-m); white-space:nowrap}
+.chip-ctx .rota{color:var(--ink2); font-size:var(--fs-s); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.chip-ctx .inc{background:var(--brand); color:#fff; border-radius:999px; padding:1px 9px; font-size:var(--fs-xs); font-weight:600}
+.topo .dir{margin-left:auto; display:flex; gap:6px; align-items:center}
+.ibtn{width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--line2); background:var(--surface); border-radius:50%; cursor:pointer; color:var(--ink2)}
+.ibtn:hover{color:var(--ink)}
+.rede{font-size:var(--fs-xs); color:var(--muted); display:flex; align-items:center; gap:6px; padding:0 6px; white-space:nowrap}
+.rede i{width:8px; height:8px; border-radius:50%; background:var(--ok)}
+.rede.off i{background:var(--crit)}
+
+/* KPIs */
+.manif{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,132px),1fr)); gap:10px; padding:16px 24px 0}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:var(--r2); padding:10px 12px; box-shadow:var(--shadow); min-width:0}
+.kpi b{display:block; font-family:var(--ffc); font-size:clamp(1.05rem,1.1vw + .6rem,1.35rem); font-weight:600; line-height:1.15; font-variant-numeric:tabular-nums; overflow-wrap:anywhere}
+.kpi small{color:var(--muted); font-size:var(--fs-xs); display:block; line-height:1.3; margin-top:2px}
+.kpi.alerta{border-color:var(--crit)} .kpi.alerta b{color:var(--crit)}
+.kpi.atencao{border-color:var(--amber)} .kpi.atencao b{color:var(--amber-ink)}
+
+/* subnavegação */
+.subnav{display:flex; gap:4px; padding:16px 24px 0; overflow-x:auto; scrollbar-width:none}
+.subnav::-webkit-scrollbar{display:none}
+.seg{display:inline-flex; background:var(--surface3); border-radius:999px; padding:3px; gap:2px}
+.seg button{border:0; background:transparent; border-radius:999px; padding:7px 16px; cursor:pointer; font-weight:500; color:var(--ink2); white-space:nowrap; min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+
+main{padding:20px 24px 48px; min-width:0; max-width:1480px; width:100%}
+h1{font-family:var(--ffc); font-weight:600; font-size:var(--fs-xxl); line-height:1.05; margin:0 0 6px}
+h2{font-family:var(--ffc); font-weight:600; font-size:var(--fs-xl); margin:28px 0 10px}
+h3{font-family:var(--ffc); font-weight:600; font-size:var(--fs-l); margin:0 0 8px}
+.lead{color:var(--ink2); max-width:78ch; margin:0 0 18px}
+.painel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); padding:16px 18px; margin-bottom:16px; box-shadow:var(--shadow)}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); gap:16px}
+.grid3{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); gap:14px}
+.grid2>*,.grid3>*,.hero>*,.form>*,.painel{min-width:0}
+.rolar{overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%}
+.tab-rolar{overflow-x:auto; max-width:100%; -webkit-overflow-scrolling:touch}
+
+/* tabelas */
+table{border-collapse:collapse; width:100%; font-size:var(--fs-s)}
+th{font-weight:600; text-align:left; color:var(--ink2); background:var(--surface2); border-bottom:1px solid var(--line2); padding:8px; white-space:nowrap}
+td{border-bottom:1px solid var(--line); padding:7px 8px; vertical-align:middle}
+td.n,th.n{text-align:right}
+tr.sel td{background:var(--amber-bg)}
+tr.clic{cursor:pointer} tr.clic:hover td{background:var(--surface2)}
+tfoot td{font-weight:600; border-top:2px solid var(--line2); border-bottom:0}
+td input,td select{width:100%; min-width:58px; border:1px solid var(--line); background:var(--surface); border-radius:var(--r1); padding:5px 7px; font-variant-numeric:tabular-nums; min-height:32px}
+td input[type=number]{text-align:right}
+
+/* formulários e botões */
+.form{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr)); gap:10px 14px}
+.form label,.campo{display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--ink2); font-weight:500}
+.form input,.form select,.campo input,.campo select{border:1px solid var(--line2); background:var(--surface); border-radius:var(--r2); padding:7px 10px; min-height:40px; font-size:var(--fs-m)}
+.btn{border:1px solid var(--line2); background:var(--surface); border-radius:var(--r2); padding:8px 14px; cursor:pointer; font-weight:500; min-height:40px; display:inline-flex; align-items:center; gap:8px}
+.btn.pri{background:var(--brand); border-color:var(--brand); color:#fff}
+.btn.pri:hover{background:var(--brand2)}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+.acoes{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0}
+.tag{display:inline-block; font-size:var(--fs-xs); padding:1px 8px; border-radius:999px; border:1px solid var(--line2); white-space:nowrap; font-weight:500}
+.tag.crit{background:var(--crit-bg); border-color:var(--crit); color:var(--crit)}
+.tag.at{background:var(--amber-bg); border-color:#C98A00; color:var(--amber-ink)}
+.tag.ok{background:var(--ok-bg); border-color:var(--ok); color:var(--ok)}
+.aviso{border-left:4px solid var(--amber); background:var(--amber-bg); padding:10px 14px; border-radius:0 var(--r2) var(--r2) 0; margin:10px 0; font-size:var(--fs-s)}
+.aviso.crit{border-color:var(--crit); background:var(--crit-bg)}
+.aviso.ok{border-color:var(--ok); background:var(--ok-bg)}
+.aviso>b:first-child{display:block; margin-bottom:2px}
+.muted{color:var(--muted)} .peq{font-size:var(--fs-xs)}
+.formula{font-family:var(--ffc); font-size:var(--fs-l); background:var(--surface2); border:1px solid var(--line); padding:10px 12px; border-radius:var(--r2); overflow-x:auto; white-space:nowrap}
+dl.kv{display:grid; grid-template-columns:auto 1fr; gap:5px 14px; margin:0; font-size:var(--fs-s)}
+dl.kv dt{color:var(--muted)} dl.kv dd{margin:0; font-variant-numeric:tabular-nums; font-weight:500}
+
+/* visão geral */
+.hero{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:16px; margin-bottom:16px}
+.status{background:var(--status,#2D3336); border:1px solid var(--status-bd,transparent); color:var(--rail-ink); border-radius:var(--r3); padding:20px 22px; position:relative; overflow:hidden; box-shadow:var(--shadow)}
+.status .eyebrow{color:var(--rail-muted); font-size:var(--fs-s)}
+.status .grande{font-family:var(--ffc); font-weight:600; font-size:3.4rem; line-height:1; margin:6px 0 4px; font-variant-numeric:tabular-nums}
+.status .grande small{font-size:1.2rem; color:var(--rail-muted); font-weight:500}
+.status .prox{font-size:var(--fs-m)}
+.status .faixa{position:absolute; right:-20px; top:-20px; width:120px; height:120px; border-radius:50%; border:14px solid var(--brand); opacity:.9}
+.status.alerta .faixa{border-color:var(--crit)}
+.linha-tempo svg{display:block; width:100%; min-width:620px; height:auto}
+.linha-tempo text{font-family:var(--ffc); fill:var(--ink)}
+.alertas{display:flex; flex-direction:column; gap:8px}
+.alerta-it{display:flex; gap:10px; align-items:flex-start; border:1px solid var(--line); border-radius:var(--r2); padding:10px 12px; background:var(--surface); cursor:pointer; text-align:left; width:100%}
+.alerta-it:hover{border-color:var(--line2)}
+.alerta-it i{width:10px; height:10px; border-radius:50%; margin-top:5px; flex:none; background:var(--amber)}
+.alerta-it.crit i{background:var(--crit)} .alerta-it.ok i{background:var(--ok)}
+.alerta-it b{display:block; font-size:var(--fs-s)} .alerta-it span{font-size:var(--fs-xs); color:var(--muted)}
+.split{display:flex; height:14px; border-radius:7px; overflow:hidden; background:var(--surface3); margin:8px 0}
+.split i{display:block; height:100%}
+.mini-cont{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:12px}
+.mini-cont .plano svg{min-width:0}
+
+/* marcação */
+.caixa-face{background:repeating-linear-gradient(0deg,var(--wood) 0 38px,var(--wood2) 38px 40px); color:var(--woodink); border:6px solid var(--wood2); border-radius:3px; padding:18px 20px; font-family:var(--ffs); position:relative; min-height:320px}
+.caixa-face .l1{font-size:clamp(1.3rem,4vw,1.9rem); line-height:1.05; letter-spacing:.03em}
+.caixa-face .l2{font-size:1.05rem; margin-top:6px; line-height:1.35}
+.caixa-face .cols{display:grid; grid-template-columns:1fr 1fr; gap:4px 16px; margin-top:12px; font-size:.95rem}
+.caixa-face .pict{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+.caixa-face .pict svg{width:44px; height:44px; stroke:var(--woodink); fill:none; stroke-width:3}
+.caixa-face .ippc{position:absolute; right:14px; bottom:14px; border:3px solid var(--woodink); padding:4px 8px; font-size:.8rem; line-height:1.2; text-align:center}
+.caixa-face .sscc{font-family:var(--ff); font-weight:600; font-size:.8rem; margin-top:10px; letter-spacing:.06em; padding-right:90px}
+
+/* estufagem */
+.cont-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); margin-bottom:18px; overflow:hidden; box-shadow:var(--shadow)}
+.cont-hd{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--surface2)}
+.cont-hd h3{margin:0; font-size:var(--fs-xl)}
+.cont-hd .id{font-family:var(--ffc); font-size:var(--fs-l); letter-spacing:.04em}
+.cont-bd{padding:14px 16px}
+.plano svg{display:block; width:100%; height:auto; min-width:600px}
+.plano text{font-family:var(--ffc); fill:var(--ink)}
+.barra{height:8px; background:var(--surface3); border-radius:4px; overflow:hidden; margin-top:4px}
+.barra i{display:block; height:100%; background:var(--steel)}
+.barra i.hi{background:var(--brand)}
+
+/* calendário */
+.cal{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:16px}
+.mes{background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); padding:12px; box-shadow:var(--shadow)}
+.mes h4{font-family:var(--ffc); font-size:var(--fs-l); margin:0 0 8px} .mes h4::first-letter{text-transform:uppercase}
+.dias{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px}
+.dias .dw{font-size:var(--fs-xs); color:var(--muted); text-align:center; padding:2px 0}
+.dia{min-width:0; min-height:46px; border:1px solid var(--line); border-radius:var(--r1); padding:2px 3px; font-size:10px; line-height:1.15; background:var(--surface)}
+.dia .d{font-size:var(--fs-xs); color:var(--ink2); font-variant-numeric:tabular-nums}
+.dia.fds,.dia.fer{background:var(--surface2)} .dia.fer .d{color:var(--crit)}
+.dia.vazio{border:0; background:transparent}
+.dia.hoje{outline:2px solid var(--brand); outline-offset:-1px}
+.dia .mk{display:block; margin-top:1px; padding:1px 2px; border-radius:2px; background:var(--cargo-a); color:var(--ink); white-space:normal; overflow-wrap:anywhere; hyphens:auto; line-height:1.1}
+.dia .mk.crit{background:var(--brand); color:#fff}
+.dia .mk.mar{background:var(--cargo-b); color:var(--cargo-b-ink)}
+.dia .mk.venc{background:var(--crit); color:#fff}
+
+/* ledger */
+.cadeia{display:flex; flex-direction:column}
+.bloco{display:grid; grid-template-columns:48px 1fr; gap:0 12px}
+.bloco .ix{font-family:var(--ffc); font-weight:700; font-size:var(--fs-l); text-align:center; padding-top:10px; position:relative}
+.bloco .ix::after{content:''; position:absolute; left:50%; top:40px; bottom:-10px; width:2px; background:var(--line2)}
+.bloco:last-child .ix::after{display:none}
+.bloco .corpo{background:var(--surface); border:1px solid var(--line); border-radius:var(--r2); padding:10px 14px; margin-bottom:10px; min-width:0}
+.bloco.invalido .corpo{border-color:var(--crit); background:var(--crit-bg)}
+.bloco.pend .corpo{opacity:.55; border-style:dashed}
+.hash{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace; font-size:11px; word-break:break-all; color:var(--ink2)}
+.bloco .t{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap}
+ol.fontes li{margin:8px 0}
+
+/* diálogo de ajustes */
+dialog.folha{border:0; padding:0; border-radius:var(--r3); background:var(--surface); color:var(--ink); width:min(520px,calc(100vw - 32px)); box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog.folha::backdrop{background:rgba(10,12,14,.5)}
+.folha-hd{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line)}
+.folha-hd h3{margin:0; font-size:var(--fs-xl)}
+.folha-bd{padding:16px 20px 20px; display:flex; flex-direction:column; gap:14px}
+.folha .seg{width:100%} .folha .seg button{flex:1}
+.dica-ios{display:none}
+
+/* sessão, login e novo embarque */
+.usr{display:flex; align-items:center; gap:8px; border:1px solid var(--line2); background:var(--surface); border-radius:999px; padding:3px 12px 3px 3px; min-height:36px; cursor:pointer; color:var(--ink); font:inherit; font-size:var(--fs-s)}
+.usr .av{width:28px; height:28px; border-radius:50%; background:var(--graphite); color:#fff; display:grid; place-items:center; font-weight:700; font-size:var(--fs-xs)}
+.usr-n{max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.sessao{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; background:var(--surface2); border-radius:var(--r2); padding:12px 14px}
+.sessao b{display:block} .sessao .papeis{display:flex; flex-wrap:wrap; gap:4px; margin-top:4px}
+.sessao .sessao-acoes{display:flex; gap:8px; flex-wrap:wrap}
+dialog.folha.larga{width:min(720px,calc(100vw - 32px))}
+.folha-bd.rolar-y{max-height:min(78vh,760px); overflow-y:auto}
+.usr-lista{display:flex; flex-direction:column; gap:10px}
+.usr-card{border:1px solid var(--line); border-radius:var(--r2); padding:12px 14px; display:flex; flex-direction:column; gap:8px; background:var(--surface)}
+.usr-card.inativo{opacity:.62}
+.usr-hd{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; min-width:0}
+.usr-hd>div{min-width:0} .usr-hd b{display:block; overflow-wrap:anywhere} .usr-hd .peq{overflow-wrap:anywhere}
+.usr-papeis{display:flex; flex-wrap:wrap; gap:6px 14px}
+.usr-papeis label,.usr-novo .chk label{display:inline-flex; align-items:center; gap:6px; font-size:var(--fs-s); min-height:32px; cursor:pointer}
+.usr-papeis input,.usr-novo .chk input{width:18px; height:18px; accent-color:var(--brand)}
+.usr-novo{border:1px dashed var(--line2); border-radius:var(--r2); padding:12px 14px}
+.usr-novo summary{cursor:pointer; min-height:32px; display:flex; align-items:center}
+.usr-novo-bd{display:flex; flex-direction:column; gap:12px; margin-top:10px}
+.usr-novo .chk{display:flex; flex-wrap:wrap; gap:6px 14px}
+.senha-tmp{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:var(--fs-m); user-select:all; overflow-wrap:anywhere; background:var(--surface); border:1px solid var(--line2); border-radius:var(--r1); padding:6px 10px; display:block; margin-top:6px}
+.tela-login{position:fixed; inset:0; z-index:80; background:var(--bg); display:grid; place-items:center; padding:24px}
+.tela-login[hidden]{display:none}
+.login-card{width:min(420px,100%); background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); box-shadow:var(--shadow); padding:28px; display:flex; flex-direction:column; gap:12px; text-align:center}
+.login-card h1{margin:0; font-size:1.8rem} .login-card .pipe{color:var(--brand); margin:0 2px; font-weight:400}
+.login-card .btn{justify-content:center; text-align:center}
+.login-card p{margin:0; color:var(--ink2)} .login-card small{color:var(--muted)}
+.login-logo{width:64px; height:64px; border-radius:16px; background:var(--graphite); display:grid; place-items:center; margin:0 auto}
+.login-logo .ic{width:40px; height:40px}
+.proj-card.novo{align-items:center; justify-content:center; border-style:dashed; color:var(--ink2); font-weight:600; min-height:110px}
+.proj-card.novo .ic{width:26px; height:26px; color:var(--brand)}
+
+/* documentos */
+.docs{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr)); gap:12px; margin-bottom:18px}
+.doc{background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); padding:12px 14px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow); min-width:0}
+.doc.na{opacity:.72; box-shadow:none; background:var(--surface2)}
+.doc-hd{display:flex; justify-content:space-between; align-items:flex-start; gap:10px} .doc-hd b{display:block} .doc-hd .tag{flex:none}
+.doc p{margin:0}
+.versoes{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}
+.versoes li{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font-size:var(--fs-xs); border-top:1px dashed var(--line); padding-top:6px; min-width:0}
+.versoes li > span:first-child{flex:1 1 200px; min-width:0; overflow-wrap:anywhere}
+.doc-acoes{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.doc-num{flex:1 1 160px; min-width:0; border:1px solid var(--line2); border-radius:var(--r1); padding:6px 8px; background:var(--surface); color:var(--ink); min-height:34px; font:inherit}
+.btn.mini{min-height:34px; padding:4px 12px; font-size:var(--fs-s)}
+
+/* carteira de projetos */
+.carteira{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:12px; margin-bottom:16px}
+.proj-card{display:flex; flex-direction:column; gap:4px; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:var(--r3); padding:12px 14px; cursor:pointer; box-shadow:var(--shadow)}
+.proj-card:hover{border-color:var(--line2)}
+.proj-card.ativo{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand),var(--shadow)}
+.pc-top{display:flex; justify-content:space-between; gap:8px; align-items:center} .pc-top b{font-family:var(--ffc); font-size:var(--fs-l)}
+.pc-tit{font-weight:600; font-size:var(--fs-s)} .pc-meta{font-size:var(--fs-xs); color:var(--muted)}
+.proj-card .split{margin:4px 0; height:6px}
+.modo{font-size:var(--fs-xs); font-weight:600; border:1px solid var(--line2); border-radius:999px; padding:3px 10px; color:var(--ink2); white-space:nowrap}
+.modo.srv{border-color:var(--ok); color:var(--ok); background:var(--ok-bg)}
+.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(24px + var(--sab)); z-index:60; background:var(--graphite); color:#fff; padding:10px 16px; border-radius:var(--r2); box-shadow:0 10px 30px rgba(0,0,0,.3); font-size:var(--fs-s); max-width:min(560px,calc(100vw - 24px))}
+.toast.ok{border-left:4px solid var(--ok)} .toast.crit{border-left:4px solid var(--crit)}
+td input:disabled,td select:disabled,.form input:disabled,.form select:disabled{opacity:.6; cursor:not-allowed; background:var(--surface2)}
+
+/* tabela que não cabe no contêiner vira cartões (decidido em JS pela largura real) */
+  table.cartoes thead{display:none}
+  table.cartoes,table.cartoes tbody,table.cartoes tfoot{display:block}
+  table.cartoes tr{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:6px 14px; padding:12px 2px; border-bottom:1px solid var(--line)}
+  table.cartoes td{display:flex; flex-direction:column; gap:2px; border:0; padding:0; text-align:left!important; min-width:0}
+  table.cartoes td::before{content:attr(data-l); font-size:var(--fs-xs); color:var(--muted); font-weight:500}
+  table.cartoes td[data-l=""]::before{display:none}
+  table.cartoes td:first-child{grid-column:1/-1; font-weight:600}
+  table.cartoes td input,table.cartoes td select{width:100%!important; text-align:left}
+  table.cartoes.carga td:nth-child(2){grid-column:1/-1}
+  table.cartoes tfoot tr{border-bottom:0; background:var(--surface2); border-radius:var(--r2); padding:10px}
+  table.cartoes tfoot td{grid-column:auto}
+  table.cartoes tr.sel{background:var(--amber-bg); border-radius:var(--r2); padding-left:8px; padding-right:8px}
+  table.cartoes tr.sel td{background:transparent}
+
+/* navegação inferior (mobile) */
+.bottom{display:none}
+footer.rod{padding:16px 24px 30px; color:var(--muted); font-size:var(--fs-xs); border-top:1px solid var(--line); margin-top:auto}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width:1100px){
+  :root{--rail-w:84px}
+  .marca .txt,#nav .sub,.rail-pe .rot{display:none}
+  .marca{justify-content:center; padding:4px 0 18px}
+  #nav button{flex-direction:column; gap:4px; padding:10px 4px; font-size:11px; text-align:center}
+  #nav button .nm{line-height:1.1}
+  .rail-pe .btn-rail{justify-content:center; padding:8px}
+  .hero{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .shell{display:block}
+  .rail{display:none}
+  .topo{padding:calc(var(--sat) + 8px) calc(var(--sar) + 12px) 8px calc(var(--sal) + 12px)}
+  .topo .marca-m{display:grid; width:34px; height:34px; border-radius:9px; background:var(--rail); place-items:center; flex:none}
+  .chip-ctx{flex:1; box-shadow:none}
+  .rede span{display:none}
+  .modo{display:none}
+  .usr{padding:3px} .usr-n{display:none}
+  .carteira{grid-auto-flow:column; grid-template-columns:none; grid-auto-columns:82%; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:4px}
+  .proj-card{scroll-snap-align:start}
+  .toast{bottom:calc(var(--bot-h) + var(--sab) + 12px)}
+  @media (max-width:520px){.chip-ctx .rota{display:none}}
+  .manif{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-inline:12px; padding:12px 0 2px; gap:8px; scrollbar-width:none}
+  .manif::before,.manif::after{content:''; flex:0 0 4px}
+  .manif::-webkit-scrollbar{display:none}
+  .kpi{flex:0 0 44%; scroll-snap-align:start}
+  .subnav{padding:12px 12px 0}
+  main{padding:14px 12px calc(var(--bot-h) + var(--sab) + 28px)}
+  h1{font-size:1.75rem}
+  .painel{padding:14px; border-radius:var(--r2)}
+  .plano svg{min-width:540px}
+  .dia{min-height:38px}
+  .dia .mk{font-size:0; line-height:0; height:5px; padding:0; margin-top:2px}
+  .status .faixa{width:84px; height:84px; border-width:10px; right:-26px; top:-26px}
+  .status .eyebrow{padding-right:48px}
+  footer.rod{padding-bottom:calc(var(--bot-h) + var(--sab) + 20px)}
+  .bottom{display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:0; right:0; bottom:0; z-index:40; background:var(--rail); padding:0 var(--sar) var(--sab) var(--sal); height:calc(var(--bot-h) + var(--sab)); border-top:1px solid #000}
+  .bottom button{border:0; background:transparent; color:var(--rail-muted); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:11px; font-weight:500; cursor:pointer; position:relative}
+  .bottom button[aria-current="page"]{color:#fff}
+  .bottom button[aria-current="page"] svg{color:var(--brand)}
+  .bottom button[aria-current="page"]::before{content:''; position:absolute; top:0; left:28%; right:28%; height:3px; background:var(--brand); border-radius:0 0 3px 3px}
+  dialog.folha,dialog.folha.larga{width:100vw; max-width:100vw; margin:auto 0 0; border-radius:var(--r3) var(--r3) 0 0; padding-bottom:var(--sab)}
+  /* tabelas viram cartões */
+  table.resp thead{display:none}
+  table.resp,table.resp tbody,table.resp tfoot{display:block}
+  table.resp tr{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; padding:12px 2px; border-bottom:1px solid var(--line)}
+  table.resp td{display:flex; flex-direction:column; gap:2px; border:0; padding:0; text-align:left!important; min-width:0}
+  table.resp td::before{content:attr(data-l); font-size:var(--fs-xs); color:var(--muted); font-weight:500}
+  table.resp td[data-l=""]::before{display:none}
+  table.resp td:first-child{grid-column:1/-1; font-weight:600}
+  table.resp td input,table.resp td select{width:100%!important; text-align:left}
+  table.resp.carga td:nth-child(2){grid-column:1/-1}
+  table.resp tfoot tr{border-bottom:0; background:var(--surface2); border-radius:var(--r2); padding:10px}
+  table.resp tfoot td{grid-column:auto}
+  table.resp tr.sel{background:var(--amber-bg); border-radius:var(--r2); padding-left:8px; padding-right:8px}
+  table.resp tr.sel td{background:transparent}
+}
+@media (display-mode:standalone){ .btn-instalar{display:none!important} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+@media print{.rail,.topo,.bottom,.subnav,.acoes{display:none!important} .shell{display:block}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-painel" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+  <symbol id="i-plan" viewBox="0 0 24 24"><path d="M12 3 3 7.5l9 4.5 9-4.5z"/><path d="M3 7.5V16.5L12 21l9-4.5V7.5"/><path d="M12 12v9"/></symbol>
+  <symbol id="i-emb" viewBox="0 0 24 24"><path d="M3 17h18l-2.5 4h-13z"/><path d="M5 17V11h14v6"/><path d="M8 11V7h5v4M12 4v3"/></symbol>
+  <symbol id="i-acomp" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 14v3l2 1"/></symbol>
+  <symbol id="i-docs" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-lua" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
+  <symbol id="i-ajuste" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="12.5" rx="1.6" fill="#EB6A20" stroke="none"/><path d="M6.2 9.6v7.3M10.5 9.6v7.3M14.8 9.6v7.3" stroke="#2D3336" stroke-opacity=".42" stroke-width="1.4" stroke-linecap="round" fill="none"/><circle cx="18.6" cy="6.6" r="4.6" fill="#F6A709" stroke="#2D3336" stroke-width="1.3"/><path d="M16.8 8.4l3.4-3.4M17.5 5h2.7v2.7" fill="none" stroke="#2D3336" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<div class="shell">
+  <aside class="rail" aria-label="Navegação principal">
+    <div class="marca"><span class="logo"><svg class="ic"><use href="#i-logo"/></svg></span><span class="txt">GPlanSiS<i class="pipe">|</i>COMEX<small>Comércio exterior · exportação</small></span></div>
+    <nav id="nav"></nav>
+    <div class="rail-pe">
+      <button class="btn-rail pri btn-instalar" data-instalar hidden><svg class="ic"><use href="#i-down"/></svg><span class="rot">Instalar aplicativo</span></button>
+      <button class="btn-rail" data-cfg><svg class="ic"><use href="#i-ajuste"/></svg><span class="rot">Embarque e aparência</span></button>
+    </div>
+  </aside>
+  <div class="corpo">
+    <header class="topo">
+      <span class="marca-m" aria-hidden="true"><svg class="ic"><use href="#i-logo"/></svg></span>
+      <button class="chip-ctx" data-cfg id="chip" aria-label="Alterar destino, Incoterm e câmbio"></button>
+      <div class="dir">
+        <span class="modo" id="modo">demonstração</span>
+        <span class="rede" id="rede"><i></i><span>online</span></span>
+        <button class="usr" id="usr" data-cfg hidden aria-label="Sessão do usuário"><span class="av" id="usrAv"></span><span class="usr-n" id="usrN"></span></button>
+        <button class="ibtn" id="btnTema" aria-label="Alternar tema"><svg class="ic"><use href="#i-auto"/></svg></button>
+      </div>
+    </header>
+    <section class="manif" id="manif" aria-label="Resumo do embarque"></section>
+    <div class="subnav" id="sub"></div>
+    <main id="main" tabindex="-1"></main>
+    <footer class="rod">GPlanSiS|COMEX v1.0. Fretes e taxas são estimativas indicativas de set/2026 — confirmar com armador/NVOCC antes de ofertar. NCM/HS e tributos no destino devem ser validados pelo despachante.</footer>
+  </div>
+</div>
+<nav class="bottom" id="bottom" aria-label="Navegação"></nav>
+<div class="tela-login" id="telaLogin" hidden>
+  <div class="login-card">
+    <span class="login-logo" aria-hidden="true"><svg class="ic"><use href="#i-logo"/></svg></span>
+    <h1>GPlanSiS<span class="pipe">|</span>COMEX</h1>
+    <p>Entre com sua conta GPlanSiS para acessar os embarques, aprovar cotações e registrar eventos no banco.</p>
+    <div class="aviso crit" id="loginErro" hidden></div>
+    <button class="btn pri" id="btnEntrar">Entrar</button>
+    <button class="btn" id="btnDemo">Ver demonstração sem entrar</button>
+    <a class="peq muted" href="./" style="text-decoration:none">← Conhecer o GPlanSiS|COMEX</a>
+    <small>A demonstração roda no navegador e não altera o banco.</small>
+  </div>
+</div>
+<dialog class="folha" id="dlgNovo" aria-labelledby="novoT">
+  <div class="folha-hd"><h3 id="novoT">Novo embarque</h3><button class="ibtn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div class="folha-bd">
+    <div class="grid2" style="gap:12px">
+      <label class="campo">Código<input id="nvCod" required pattern="CMX-[0-9]{2}-[0-9]{4}"></label>
+      <label class="campo">Data programada de entrega<input id="nvEnt" type="date" required></label>
+    </div>
+    <label class="campo">Título do embarque<input id="nvTit" required placeholder="Ex.: Usina — painéis de média tensão"></label>
+    <div class="grid2" style="gap:12px">
+      <label class="campo">Cliente<input id="nvCli" list="nvCliLista" required placeholder="Razão social"><datalist id="nvCliLista"></datalist></label>
+      <label class="campo">País do cliente<input id="nvPais" placeholder="Preenchido se o cliente já existe"></label>
+    </div>
+    <div class="grid2" style="gap:12px">
+      <label class="campo">Destino<select id="nvRota"></select></label>
+      <label class="campo">Incoterm 2020<select id="nvInc"></select></label>
+    </div>
+    <label class="campo">Itens de partida<select id="nvBase"></select></label>
+    <div class="aviso crit" id="nvErro" hidden></div>
+    <button class="btn pri" id="btnCriar">Criar embarque</button>
+  </div>
+</dialog>
+<dialog class="folha larga" id="dlgUsr" aria-labelledby="usrT">
+  <div class="folha-hd"><h3 id="usrT">Usuários e acessos</h3><button class="ibtn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div class="folha-bd rolar-y">
+    <div class="aviso ok" id="usrSenha" hidden></div>
+    <details class="usr-novo" id="usrNovoBox"><summary><b>+ Novo usuário</b></summary><div class="usr-novo-bd">
+      <div class="grid2" style="gap:12px">
+        <label class="campo">Nome<input id="unNome" autocomplete="off" required></label>
+        <label class="campo">Sobrenome<input id="unSob" autocomplete="off"></label>
+      </div>
+      <label class="campo">E-mail (também é o login)<input id="unEmail" type="email" inputmode="email" autocomplete="off" required></label>
+      <div class="campo">Papéis<div class="chk" id="unPapeis"></div></div>
+      <div class="aviso crit" id="unErro" hidden></div>
+      <button class="btn pri" id="btnUsrCriar">Criar com senha temporária</button>
+    </div></details>
+    <label class="campo">Buscar<input id="usrBusca" type="search" placeholder="nome ou e-mail"></label>
+    <div class="usr-lista" id="usrLista"><p class="muted">Carregando…</p></div>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<dialog class="folha" id="cfg" aria-labelledby="cfgT">
+  <div class="folha-hd"><h3 id="cfgT">Embarque e aparência</h3><button class="ibtn" data-fechar aria-label="Fechar"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div class="folha-bd">
+    <div class="sessao" id="sessao" hidden></div>
+    <label class="campo">Projeto<select id="selProj"></select></label>
+    <label class="campo">Destino<select id="selRota"></select></label>
+    <div class="grid2" style="gap:12px">
+      <label class="campo">Incoterm 2020<select id="selInc"></select></label>
+      <label class="campo">Câmbio USD/BRL<input id="inFx" type="number" step="0.01" inputmode="decimal"></label>
+    </div>
+    <div class="campo">Tema
+      <div class="seg" role="group" aria-label="Tema">
+        <button data-tema="auto">Sistema</button><button data-tema="light">Claro</button><button data-tema="dark">Escuro</button>
+      </div>
+    </div>
+    <button class="btn pri btn-instalar" data-instalar hidden><svg class="ic"><use href="#i-down"/></svg>Instalar aplicativo</button>
+    <p class="aviso dica-ios" id="dicaIos"><b>Instalar no iPhone/iPad</b>No Safari, toque em Compartilhar e depois em "Adicionar à Tela de Início".</p>
+    <button class="btn" id="btnReset">Restaurar exemplo</button>
+  </div>
+</dialog>
+<script>
+/* ===== MOTOR COMEX ===== */
+const CONT = {
+  '20DV': {nome:"20' Dry",       L:5898, W:2352, H:2393, doorW:2340, doorH:2280, tara:2230, payload:28230, top:false, cls:20},
+  '40DV': {nome:"40' Dry",       L:12032,W:2352, H:2393, doorW:2340, doorH:2280, tara:3750, payload:26730, top:false, cls:40},
+  '40HC': {nome:"40' High Cube", L:12032,W:2352, H:2698, doorW:2340, doorH:2585, tara:3900, payload:26580, top:false, cls:40},
+  '40OT': {nome:"40' Open Top",  L:12032,W:2350, H:2350, doorW:2340, doorH:2270, tara:4000, payload:26480, top:true,  cls:40, ohMax:600},
+  '40FR': {nome:"40' Flat Rack", L:12080,W:2420, H:1950, doorW:1e9,  doorH:1e9,  tara:5000, payload:40000, top:true,  cls:40, oog:true}
+};
+const EMB_TIPOS = {
+  crate:     {nome:'Caixa fechada ISPM-15 + barreira Al + dessecante', aberto:1,    barreira:true},
+  caixa:     {nome:'Caixa compensado fechada + VCI + dessecante',      aberto:1,    barreira:true},
+  engradado: {nome:'Engradado ripado ISPM-15 + filme VCI',             aberto:0.45, barreira:false}
+};
+const ITENS_PADRAO = [
+  {id:'CCM', nome:'CCM — Centro de Controle de Motores', tag:'CCM-01 / CCM-02', qtd:2, secoes:2, L:2400, W:600,  H:2300, kg:1350, valor:185000, ncm:'8537.10.90', emb:'crate', pilha:1},
+  {id:'QGBT',nome:'QGBT — Quadro Geral de Baixa Tensão', tag:'QGBT-01 / QGBT-02', qtd:2, secoes:2, L:1600, W:1000, H:2300, kg:1250, valor:160000, ncm:'8537.10.90', emb:'crate', pilha:1},
+  {id:'RIO', nome:'Painel de Remota (I/O distribuído)', tag:'RIO-01', qtd:1, secoes:1, L:800, W:500, H:2000, kg:220, valor:28000, ncm:'8537.10.90', emb:'crate', pilha:1},
+  {id:'PLC', nome:'Painel PLC / CLP', tag:'PLC-01', qtd:1, secoes:1, L:1600, W:600, H:2200, kg:480, valor:95000, ncm:'8537.10.20', emb:'crate', pilha:1},
+  {id:'IHM', nome:'Painéis IHM (console pedestal)', tag:'IHM-01 / IHM-02', qtd:2, secoes:1, L:800, W:600, H:1400, kg:140, valor:22000, ncm:'8537.10.90', emb:'crate', pilha:1},
+  {id:'KIT', nome:'Kit de componentes e sobressalentes', tag:'KIT-SP-01', qtd:1, secoes:3, L:1200, W:800, H:900, kg:780, valor:60000, ncm:'8538.90.90', emb:'caixa', pilha:2},
+  {id:'BAN', nome:'Bancadas metálicas', tag:'BAN-01 / BAN-02', qtd:2, secoes:1, L:2000, W:800, H:900, kg:190, valor:6000, ncm:'9403.20.90', emb:'engradado', pilha:2},
+  {id:'MT',  nome:'Painéis de Média Tensão 15 kV (6 cubículos)', tag:'PMT-01', qtd:1, secoes:3, L:1500, W:1600, H:2350, kg:1500, valor:340000, ncm:'8537.20.90', emb:'crate', pilha:1},
+  {id:'DJ',  nome:'Disjuntores extraíveis MT (enviados à parte)', tag:'PMT-01-DJ', qtd:1, secoes:1, L:1800, W:1100, H:1100, kg:950, valor:80000, ncm:'8535.21.00', emb:'crate', pilha:1}
+];
+const PARAM_PADRAO = {
+  fl:50, ft:50, tp:15, tt:18, skid:100, deck:25, densComp:600, densPinus:520, fe:0.35,
+  barreira:'Al', umid:18, diasArm:90, a:6, e:0.7, mHigro:5, cHigro:10, uniDes:0.033, margemPorta:60, folgaLat:40, folgaPorta:100
+};
+const ROTAS = [
+  {id:'USHOU', nome:'Houston, EUA', porto:'Port of Houston (Barbours Cut)', tt:24, transb:false, frete:{'20DV':2600,'40DV':3600,'40HC':3700,'40OT':6200,'40FR':7400}, trib:40.2, base:'FOB', acordo:'Sem acordo preferencial — Sec. 301 (25% + 12,5%) + MFN 2,7%', co:false},
+  {id:'USPEF', nome:'Port Everglades, EUA', porto:'Port Everglades (Miami)', tt:20, transb:false, frete:{'20DV':2400,'40DV':3300,'40HC':3400,'40OT':5800,'40FR':6900}, trib:40.2, base:'FOB', acordo:'Sem acordo preferencial — Sec. 301 (25% + 12,5%) + MFN 2,7%', co:false},
+  {id:'CLSAI', nome:'San Antonio, Chile', porto:'Puerto San Antonio', tt:13, transb:false, frete:{'20DV':1400,'40DV':2100,'40HC':2200,'40OT':3900,'40FR':4800}, trib:0, base:'CIF', acordo:'ACE-35 Mercosul–Chile: 0% com certificado de origem', co:true},
+  {id:'PECLL', nome:'Callao, Peru', porto:'Callao (DP World)', tt:19, transb:true, frete:{'20DV':1700,'40DV':2500,'40HC':2600,'40OT':4300,'40FR':5300}, trib:0, base:'CIF', acordo:'ACE-58 Mercosul–Peru: 0% com certificado de origem', co:true},
+  {id:'MXVER', nome:'Veracruz, México', porto:'Veracruz (ICAVE)', tt:27, transb:true, frete:{'20DV':2700,'40DV':3800,'40HC':3900,'40OT':6400,'40FR':7600}, trib:5, base:'CIF', acordo:'Verificar cobertura ACE-53 por código — estimativa 5%', co:true},
+  {id:'NLRTM', nome:'Rotterdam, Países Baixos', porto:'Rotterdam (Maasvlakte II)', tt:23, transb:false, frete:{'20DV':1500,'40DV':2300,'40HC':2400,'40OT':4200,'40FR':5200}, trib:2.1, base:'CIF', acordo:'TEC UE 8537: 2,1% — acordo Mercosul–UE: verificar vigência provisória', co:false},
+  {id:'AOLAD', nome:'Luanda, Angola', porto:'Porto de Luanda', tt:22, transb:true, frete:{'20DV':2800,'40DV':4300,'40HC':4400,'40OT':7000,'40FR':8200}, trib:10, base:'CIF', acordo:'Pauta aduaneira angolana — estimativa 10% (validar)', co:false}
+];
+const CUSTOS = {
+  baf:{20:300,40:550}, oh:900, oogW:1400, isps:18, bl:95,
+  thcO:{20:1350,40:1650,esp:2900}, rodo:{20:2100,40:2600,OT:3200,FR:5200}, estuf:{20:900,40:1400,esp:2400},
+  thcD:{20:420,40:620}, espD:1.5, entrega:{20:950,40:1150,esp:2600}, despBR:1900, coBR:180, despDest:850,
+  seguro:0.25, madeiraM3:2600, maoCaixa:350, desUn:3.5, barM2:28, vciM2:6
+};
+
+function embalar(u,P){
+  const t=EMB_TIPOS[u.emb];
+  const il=u.L+2*P.fl, iw=u.W+2*P.fl, ih=u.H+P.ft;
+  const tw=P.tp;
+  const L=il+2*tw, W=iw+2*tw, H=ih+P.skid+P.deck+P.tt;
+  const m=v=>v/1000;
+  const aPar=2*m(L)*m(ih)+2*m(W)*m(ih);
+  const aTeto=m(L)*m(W);
+  const volPainel=(aPar*m(tw)+aTeto*m(P.tt))*t.aberto;
+  const mPainel=volPainel*P.densComp;
+  const mEstr=mPainel*P.fe;
+  const volDeck=m(L)*m(W)*m(P.deck);
+  const nSkid=W>1200?4:3;
+  const volSkid=nSkid*m(L)*0.1*m(P.skid)*(u.kg>2000?1.5:1);
+  const mBase=(volDeck+volSkid)*P.densPinus;
+  const aBar=2*(m(il)*m(iw)+m(il)*m(ih)+m(iw)*m(ih))*1.15;
+  const Vint=m(il)*m(iw)*m(ih);
+  let nDes=0,mBar;
+  const tDias=(P.ttRota||25)+P.diasArm+20;
+  if(t.barreira){
+    const WDD=P.barreira==='Al'?0.1:1.0;
+    nDes=Math.ceil((1/P.a)*(Vint*P.umid + P.mHigro*P.cHigro + aBar*P.e*WDD*tDias));
+    mBar=aBar*(P.barreira==='Al'?0.13:0.05);
+  } else mBar=aBar*0.04;
+  const mFerr=0.03*(mPainel+mEstr+mBase);
+  const tara=mPainel+mEstr+mBase+mBar+nDes*P.uniDes+mFerr;
+  const volMad=volPainel*(1+P.fe)+volDeck+volSkid;
+  const custoBRL=volMad*CUSTOS.madeiraM3+CUSTOS.maoCaixa+nDes*CUSTOS.desUn+aBar*(t.barreira?CUSTOS.barM2:CUSTOS.vciM2);
+  return {L:Math.round(L),W:Math.round(W),H:Math.round(H),il,iw,ih,tara,bruto:u.kg+tara,m3:m(L)*m(W)*m(H),
+    nDes,aBar,volMad,custoBRL,tDias,Vint,nSkid,cargaLin:u.kg/Math.max(m(L),m(W))};
+}
+
+function sscc(serial){
+  const base='3'+'7890123'+String(serial).padStart(9,'0'); // 17 dígitos
+  let s=0; for(let i=0;i<17;i++){const d=+base[16-i]; s+=d*(i%2===0?3:1);} 
+  return base+((10-s%10)%10);
+}
+
+function gerarVolumes(itens,P,pid=1){
+  const vols=[]; let n=0;
+  for(const it of itens){
+    for(let q=0;q<it.qtd;q++) for(let s=0;s<it.secoes;s++){
+      n++;
+      const u={...it, seq:n, eq:q+1, sec:s+1, valorU:it.valor/it.secoes};
+      u.cx=embalar(u,P);
+      u.sscc=sscc(pid*10000+n);
+      vols.push(u);
+    }
+  }
+  return vols;
+}
+
+/* empilhamento: agrupa volumes empilháveis de mesmo item em colunas */
+function unidadesCarga(vols){
+  const out=[]; const grupos={};
+  for(const v of vols){
+    if(v.pilha>1){(grupos[v.id]=grupos[v.id]||[]).push(v);} else out.push({vols:[v],L:v.cx.L,W:v.cx.W,H:v.cx.H,kg:v.cx.bruto,id:v.id});
+  }
+  for(const k in grupos){
+    const g=grupos[k]; const lim=CONT['40HC'].H-60;
+    let i=0;
+    while(i<g.length){
+      const col=[g[i]]; let h=g[i].cx.H; i++;
+      while(i<g.length && col.length<g[0].pilha && h+g[i].cx.H<=lim){col.push(g[i]); h+=g[i].cx.H; i++;}
+      out.push({vols:col,L:col[0].cx.L,W:col[0].cx.W,H:h,kg:col.reduce((a,v)=>a+v.cx.bruto,0),id:k});
+    }
+  }
+  return out;
+}
+
+function cabe(u,T,P,cur){
+  const C=CONT[T]; const mn=Math.min(u.L,u.W), mx=Math.max(u.L,u.W);
+  if(T==='40FR') return u.H<=4200;
+  if(mn>C.W-P.folgaLat) return false;
+  if(mx>C.L-P.folgaPorta) return false;
+  if(C.top) return u.H<=C.H+C.ohMax;
+  return u.H<=Math.min(C.H,C.doorH)-P.margemPorta && mn<=C.doorW-P.margemPorta;
+}
+function classe(u,P){ for(const T of ['40HC','40OT','40FR']) if(cabe(u,T,P)) return T; return null; }
+
+/* MaxRects — x ao longo do comprimento (parede frontal -> porta), y na largura */
+function novoBin(T,P){const C=CONT[T]; const W=(T==='40FR'?C.W:C.W-P.folgaLat), L=C.L-P.folgaPorta; return {T,L,W,free:[{x:0,y:0,w:L,h:W}],itens:[],kg:0,maxH:0};}
+function tentar(bin,u){
+  let best=null;
+  for(const f of bin.free){
+    for(const [w,h,rot] of [[u.L,u.W,false],[u.W,u.L,true]]){
+      if(w<=f.w&&h<=f.h){const sc=f.x*10000+f.y; if(!best||sc<best.sc) best={x:f.x,y:f.y,w,h,rot,sc};}
+    }
+  }
+  return best;
+}
+function colocar(bin,u,p){
+  bin.itens.push({u,x:p.x,y:p.y,l:p.w,w:p.h,rot:p.rot}); bin.kg+=u.kg; bin.maxH=Math.max(bin.maxH,u.H);
+  const nf=[];
+  for(const f of bin.free){
+    if(p.x>=f.x+f.w||p.x+p.w<=f.x||p.y>=f.y+f.h||p.y+p.h<=f.y){nf.push(f);continue;}
+    if(p.x>f.x) nf.push({x:f.x,y:f.y,w:p.x-f.x,h:f.h});
+    if(p.x+p.w<f.x+f.w) nf.push({x:p.x+p.w,y:f.y,w:f.x+f.w-p.x-p.w,h:f.h});
+    if(p.y>f.y) nf.push({x:f.x,y:f.y,w:f.w,h:p.y-f.y});
+    if(p.y+p.h<f.y+f.h) nf.push({x:f.x,y:p.y+p.h,w:f.w,h:f.y+f.h-p.y-p.h});
+  }
+  bin.free=nf.filter((a,i)=>!nf.some((b,j)=>j!==i&&a.x>=b.x&&a.y>=b.y&&a.x+a.w<=b.x+b.w&&a.y+a.h<=b.y+b.h&&(j<i||!(a.x===b.x&&a.y===b.y&&a.w===b.w&&a.h===b.h))));
+}
+function aceita(bin,u,P){
+  const C=CONT[bin.T];
+  if(bin.kg+u.kg>C.payload) return null;
+  if(C.top){ if(u.H>C.H+C.ohMax) return null; }
+  else if(!cabe(u,bin.T,P)) return null;
+  return tentar(bin,u);
+}
+
+function estufar(vols,P){
+  const us=unidadesCarga(vols).map(u=>({...u,cls:classe(u,P)}));
+  const sem=us.filter(u=>!u.cls);
+  const ord=(a,b)=>(b.L*b.W-a.L*a.W)||(b.kg-a.kg);
+  const bins=[];
+  for(const T of ['40FR','40OT','40HC']){
+    const lista=us.filter(u=>u.cls===T).sort(ord);
+    for(const u of lista){
+      let ok=false;
+      // primeiro tenta aproveitar espaço de contêineres especiais já abertos
+      for(const b of bins){ const p=aceita(b,u,P); if(p){colocar(b,u,p); ok=true; break;} }
+      if(!ok){ const b=novoBin(T,P); const p=aceita(b,u,P); if(p){colocar(b,u,p); bins.push(b);} else sem.push(u); }
+    }
+  }
+  // otimização: 40HC -> 20DV ou 40DV quando possível
+  for(let i=0;i<bins.length;i++){
+    const b=bins[i]; if(b.T!=='40HC') continue;
+    for(const T of ['20DV','40DV']){
+      if(!b.itens.every(it=>cabe(it.u,T,P))) continue;
+      const nb=novoBin(T,P); let ok=true;
+      for(const it of [...b.itens].sort((a,c)=>ord(a.u,c.u))){const p=aceita(nb,it.u,P); if(!p){ok=false;break;} colocar(nb,it.u,p);}
+      if(ok){bins[i]=nb; break;}
+    }
+  }
+  for(const b of bins){
+    const C=CONT[b.T];
+    const usado=Math.max(...b.itens.map(it=>it.x+it.l)), usadoY=Math.max(...b.itens.map(it=>it.y+it.w));
+    let cx0=b.itens.reduce((a,it)=>a+it.u.kg*(it.x+it.l/2),0)/b.kg;
+    let cy0=b.itens.reduce((a,it)=>a+it.u.kg*(it.y+it.w/2),0)/b.kg;
+    b.desloc=Math.round(Math.max(0,Math.min(b.L-usado, C.L/2-cx0)));
+    b.deslocY=Math.round(Math.max(0,Math.min(b.W-usadoY, b.W/2-cy0)));
+    for(const it of b.itens){it.x+=b.desloc; it.y+=b.deslocY;}
+    b.usado=usado;
+    const cx=b.itens.reduce((a,it)=>a+it.u.kg*(it.x+it.l/2),0)/b.kg;
+    const cy=b.itens.reduce((a,it)=>a+it.u.kg*(it.y+it.w/2),0)/b.kg;
+    b.cogX=(cx-C.L/2)/C.L*100; b.cogY=(cy-b.W/2)/b.W*100;
+    b.areaUso=b.itens.reduce((a,it)=>a+it.l*it.w,0)/(C.L*C.W)*100;
+    b.pesoUso=b.kg/C.payload*100;
+    b.oh=C.top&&b.T==='40OT'?Math.max(0,b.maxH-C.H):0;
+    b.oogW=b.T==='40FR'&&b.itens.some(it=>it.w>C.W);
+    b.vols=b.itens.flatMap(it=>it.u.vols);
+    b.m3=b.vols.reduce((a,v)=>a+v.cx.m3,0);
+    b.vgm=b.kg+C.tara;
+  }
+  return {bins,sem};
+}
+
+function cotar(bins,vols,rota,inc,fx,taxaSeg){
+  const K=CUSTOS; const linhas=[];
+  const fob=vols.reduce((a,v)=>a+v.valorU,0);
+  let tot={emb:0,carg:0,rodo:0,despE:0,thcO:0,frete:0,seg:0,thcD:0,despI:0,trib:0,entrega:0};
+  tot.emb=vols.reduce((a,v)=>a+v.cx.custoBRL,0)/fx;
+  for(const b of bins){
+    const c=CONT[b.T].cls, esp=CONT[b.T].top;
+    const r={T:b.T};
+    r.frete=rota.frete[b.T]; r.baf=K.baf[c]; r.oh=b.oh>0?K.oh:0; r.oog=b.oogW?K.oogW:0; r.isps=K.isps;
+    r.thcO=(esp?K.thcO.esp:K.thcO[c])/fx;
+    r.rodo=(b.T==='40FR'?K.rodo.FR:b.T==='40OT'?K.rodo.OT:K.rodo[c])/fx;
+    r.estuf=(esp?K.estuf.esp:K.estuf[c])/fx;
+    r.thcD=K.thcD[c]*(esp?K.espD:1);
+    r.entrega=esp?K.entrega.esp:K.entrega[c];
+    r.maritimo=r.frete+r.baf+r.oh+r.oog+r.isps;
+    linhas.push(r);
+    tot.carg+=r.estuf; tot.rodo+=r.rodo; tot.thcO+=r.thcO; tot.frete+=r.maritimo; tot.thcD+=r.thcD; tot.entrega+=r.entrega;
+  }
+  tot.frete+=K.bl;
+  tot.despE=(K.despBR+(rota.co?K.coBR:0))/fx;
+  tot.seg=(fob+tot.frete)*1.1*taxaSeg/100;
+  const baseAd=rota.base==='FOB'?fob:fob+tot.frete+tot.seg;
+  tot.trib=baseAd*rota.trib/100;
+  tot.despI=K.despDest;
+  return {linhas,tot,fob,baseAd};
+}
+const INCOTERMS={
+  EXW:{v:['emb'],risco:'Na fábrica do vendedor, carga à disposição (sem carregar)'},
+  FCA:{v:['emb','carg','despE'],risco:'Na fábrica, após carregado no veículo do transportador indicado pelo comprador'},
+  FOB:{v:['emb','carg','rodo','despE','thcO'],risco:'A bordo do navio no porto de embarque — ICC não recomenda FOB para contêiner',aviso:true},
+  CPT:{v:['emb','carg','rodo','despE','thcO','frete'],risco:'Na entrega ao primeiro transportador (fábrica/terminal)'},
+  CIP:{v:['emb','carg','rodo','despE','thcO','frete','seg'],risco:'Na entrega ao primeiro transportador — seguro mínimo ICC (A) obrigatório'},
+  CFR:{v:['emb','carg','rodo','despE','thcO','frete'],risco:'A bordo no porto de embarque — risco antes do custo',aviso:true},
+  CIF:{v:['emb','carg','rodo','despE','thcO','frete','seg'],risco:'A bordo no porto de embarque — seguro mínimo ICC (C)',aviso:true},
+  DAP:{v:['emb','carg','rodo','despE','thcO','frete','seg','thcD','entrega'],risco:'No local nomeado no destino, sobre o veículo, pronto para descarga'},
+  DPU:{v:['emb','carg','rodo','despE','thcO','frete','seg','thcD','entrega','desc'],risco:'No local nomeado, após descarregado'},
+  DDP:{v:['emb','carg','rodo','despE','thcO','frete','seg','thcD','entrega','desc','despI','trib'],risco:'No local nomeado, descarregado e desembaraçado — vendedor assume tributos no destino'}
+};
+const DEMOS=[{"pid": 1, "ref": "CMX-26-0147", "titulo": "Refinaria — pacote elétrico e automação", "cliente": "ACME Process Industries LLC", "consig": "ACME PROCESS INDUSTRIES LLC", "rota": "USHOU", "inc": "DAP", "fx": 5.1, "seg": 0.25, "entrega": "2026-12-15", "diaSaida": 4, "ledgerK": 1, "cotAprovada": false, "tamper": -1, "itens": [{"id": "CCM", "nome": "CCM — Centro de Controle de Motores", "tag": "CCM-01 / CCM-02", "qtd": 2, "secoes": 2, "L": 2400, "W": 600, "H": 2300, "kg": 1350, "valor": 185000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "QGBT", "nome": "QGBT — Quadro Geral de Baixa Tensão", "tag": "QGBT-01 / QGBT-02", "qtd": 2, "secoes": 2, "L": 1600, "W": 1000, "H": 2300, "kg": 1250, "valor": 160000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "RIO", "nome": "Painel de Remota (I/O distribuído)", "tag": "RIO-01", "qtd": 1, "secoes": 1, "L": 800, "W": 500, "H": 2000, "kg": 220, "valor": 28000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "PLC", "nome": "Painel PLC / CLP", "tag": "PLC-01", "qtd": 1, "secoes": 1, "L": 1600, "W": 600, "H": 2200, "kg": 480, "valor": 95000, "ncm": "8537.10.20", "emb": "crate", "pilha": 1}, {"id": "IHM", "nome": "Painéis IHM (console pedestal)", "tag": "IHM-01 / IHM-02", "qtd": 2, "secoes": 1, "L": 800, "W": 600, "H": 1400, "kg": 140, "valor": 22000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "KIT", "nome": "Kit de componentes e sobressalentes", "tag": "KIT-SP-01", "qtd": 1, "secoes": 3, "L": 1200, "W": 800, "H": 900, "kg": 780, "valor": 60000, "ncm": "8538.90.90", "emb": "caixa", "pilha": 2}, {"id": "BAN", "nome": "Bancadas metálicas", "tag": "BAN-01 / BAN-02", "qtd": 2, "secoes": 1, "L": 2000, "W": 800, "H": 900, "kg": 190, "valor": 6000, "ncm": "9403.20.90", "emb": "engradado", "pilha": 2}, {"id": "MT", "nome": "Painéis de Média Tensão 15 kV (6 cubículos)", "tag": "PMT-01", "qtd": 1, "secoes": 3, "L": 1500, "W": 1600, "H": 2350, "kg": 1500, "valor": 340000, "ncm": "8537.20.90", "emb": "crate", "pilha": 1}, {"id": "DJ", "nome": "Disjuntores extraíveis MT (enviados à parte)", "tag": "PMT-01-DJ", "qtd": 1, "secoes": 1, "L": 1800, "W": 1100, "H": 1100, "kg": 950, "valor": 80000, "ncm": "8535.21.00", "emb": "crate", "pilha": 1}]}, {"pid": 2, "ref": "CMX-26-0139", "titulo": "Mineração de cobre — sala elétrica e acionamentos", "cliente": "Minera Andes Cobre SpA", "consig": "MINERA ANDES COBRE SPA", "rota": "CLSAI", "inc": "CIP", "fx": 5.1, "seg": 0.25, "entrega": "2026-10-19", "diaSaida": 4, "ledgerK": 8, "cotAprovada": true, "tamper": -1, "itens": [{"id": "CCM", "nome": "CCM inteligente — moinhos e bombas", "tag": "CCM-11 / 12 / 13", "qtd": 3, "secoes": 2, "L": 2400, "W": 600, "H": 2300, "kg": 1400, "valor": 170000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "QGBT", "nome": "QGBT principal 4.000 A", "tag": "QGBT-10", "qtd": 1, "secoes": 3, "L": 1600, "W": 1000, "H": 2300, "kg": 1300, "valor": 210000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "VFD", "nome": "Painel de inversores de média potência", "tag": "VFD-01 / VFD-02", "qtd": 2, "secoes": 1, "L": 2400, "W": 800, "H": 2300, "kg": 1650, "valor": 145000, "ncm": "8504.40.90", "emb": "crate", "pilha": 1}, {"id": "MT", "nome": "Painéis de Média Tensão 23 kV (4 cubículos)", "tag": "PMT-10", "qtd": 1, "secoes": 2, "L": 1600, "W": 1700, "H": 2300, "kg": 1600, "valor": 260000, "ncm": "8537.20.90", "emb": "crate", "pilha": 1}, {"id": "DJ", "nome": "Disjuntores extraíveis MT", "tag": "PMT-10-DJ", "qtd": 1, "secoes": 1, "L": 1600, "W": 1100, "H": 1100, "kg": 700, "valor": 56000, "ncm": "8535.21.00", "emb": "crate", "pilha": 1}, {"id": "RIO", "nome": "Painéis de remota em campo", "tag": "RIO-11 / RIO-12", "qtd": 2, "secoes": 1, "L": 800, "W": 500, "H": 2000, "kg": 230, "valor": 26000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "PLC", "nome": "Painel PLC redundante", "tag": "PLC-10", "qtd": 1, "secoes": 1, "L": 1600, "W": 600, "H": 2200, "kg": 520, "valor": 118000, "ncm": "8537.10.20", "emb": "crate", "pilha": 1}, {"id": "IHM", "nome": "Console IHM da sala de controle", "tag": "IHM-10", "qtd": 1, "secoes": 1, "L": 1600, "W": 800, "H": 1200, "kg": 180, "valor": 30000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "KIT", "nome": "Kit de sobressalentes de comissionamento", "tag": "KIT-SP-10", "qtd": 1, "secoes": 2, "L": 1200, "W": 800, "H": 900, "kg": 650, "valor": 42000, "ncm": "8538.90.90", "emb": "caixa", "pilha": 2}]}, {"pid": 3, "ref": "CMX-26-0121", "titulo": "Planta química — atualização de automação", "cliente": "Nordzee Chemicals B.V.", "consig": "NORDZEE CHEMICALS B.V.", "rota": "NLRTM", "inc": "FCA", "fx": 5.1, "seg": 0.25, "entrega": "2026-09-14", "diaSaida": 4, "ledgerK": 11, "cotAprovada": true, "tamper": -1, "itens": [{"id": "PLC", "nome": "Painel PLC com rede redundante", "tag": "PLC-21", "qtd": 1, "secoes": 1, "L": 1200, "W": 600, "H": 2000, "kg": 410, "valor": 88000, "ncm": "8537.10.20", "emb": "crate", "pilha": 1}, {"id": "RIO", "nome": "Painéis de remota Ex (zona 2)", "tag": "RIO-21 / 22 / 23", "qtd": 3, "secoes": 1, "L": 800, "W": 500, "H": 2000, "kg": 210, "valor": 31000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "IHM", "nome": "Painéis IHM de campo", "tag": "IHM-21 / IHM-22", "qtd": 2, "secoes": 1, "L": 800, "W": 600, "H": 1400, "kg": 130, "valor": 19000, "ncm": "8537.10.90", "emb": "crate", "pilha": 1}, {"id": "KIT", "nome": "Kit de componentes", "tag": "KIT-SP-21", "qtd": 1, "secoes": 2, "L": 1200, "W": 800, "H": 900, "kg": 520, "valor": 24000, "ncm": "8538.90.90", "emb": "caixa", "pilha": 2}, {"id": "BAN", "nome": "Bancada metálica de manutenção", "tag": "BAN-21", "qtd": 1, "secoes": 1, "L": 2000, "W": 800, "H": 900, "kg": 180, "valor": 5200, "ncm": "9403.20.90", "emb": "engradado", "pilha": 2}]}];
+/* ===== UTIL ===== */
+const $=s=>document.querySelector(s);
+const nf=(n,d=0)=>(isFinite(n)?n:0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const usd=n=>'US$ '+nf(n,0), brl=n=>'R$ '+nf(n,0);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DIA=86400000;
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d);};
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const dsem=['dom','seg','ter','qua','qui','sex','sáb'];
+const fD=d=>dsem[d.getDay()]+' '+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+const FERIADOS=new Set(['2026-09-07','2026-10-12','2026-11-02','2026-11-15','2026-11-20','2026-12-25','2027-01-01','2027-02-15','2027-02-16','2027-04-02','2027-04-21']);
+const util=d=>d.getDay()!==0&&d.getDay()!==6&&!FERIADOS.has(iso(d));
+const wdBack=(d,n)=>{let x=d; while(n>0){x=addD(x,-1); if(util(x)) n--;} return x;};
+const wdFwd=(d,n)=>{let x=d; while(n>0){x=addD(x,1); if(util(x)) n--;} return x;};
+const proxUtil=d=>{let x=d; while(!util(x)) x=addD(x,1); return x;};
+const HOJE=(()=>{const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate());})();
+
+/* ===== SHA-256 (Web Crypto com fallback puro) ===== */
+function sha256js(ascii){
+  function r(v,a){return (v>>>a)|(v<<(32-a));}
+  const bytes=new TextEncoder().encode(ascii); const K=[],H=[]; let p=2,c=0;
+  while(c<64){let prime=true; for(let i=2;i*i<=p;i++) if(p%i===0){prime=false;break;} if(prime){ if(c<8) H[c]=(Math.pow(p,.5)*4294967296)|0; K[c++]=(Math.pow(p,1/3)*4294967296)|0;} p++;}
+  const l=bytes.length, bl=((l+9+63)>>6)<<6; const m=new Uint8Array(bl); m.set(bytes); m[l]=0x80;
+  const dv=new DataView(m.buffer); dv.setUint32(bl-4,l*8); const w=new Array(64);
+  for(let j=0;j<bl;j+=64){
+    let [a,b,cc,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){
+      if(i<16) w[i]=dv.getUint32(j+i*4);
+      else{const w15=w[i-15],w2=w[i-2]; w[i]=(w[i-16]+(r(w15,7)^r(w15,18)^(w15>>>3))+w[i-7]+(r(w2,17)^r(w2,19)^(w2>>>10)))|0;}
+      const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+w[i])|0;
+      const t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&cc)^(b&cc)))|0;
+      h=g; g=f; f=e; e=(d+t1)|0; d=cc; cc=b; b=a; a=(t1+t2)|0;
+    }
+    H[0]=(H[0]+a)|0;H[1]=(H[1]+b)|0;H[2]=(H[2]+cc)|0;H[3]=(H[3]+d)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0;
+  }
+  return H.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('');
+}
+async function sha256(s){
+  try{ if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');} }catch(e){}
+  return sha256js(s);
+}
+async function merkle(folhas){
+  if(!folhas.length) return '';
+  let n=await Promise.all(folhas.map(f=>sha256(f)));
+  while(n.length>1){const p=[]; for(let i=0;i<n.length;i+=2) p.push(await sha256(n[i]+(n[i+1]||n[i]))); n=p;}
+  return n[0];
+}
+/* ISO 6346 — dígito verificador de contêiner */
+function iso6346(pref){
+  const v={}; let x=10; for(const ch of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'){ if(x%11===0) x++; v[ch]=x++; }
+  let s=0; for(let i=0;i<10;i++){const ch=pref[i]; s+=(isNaN(ch)?v[ch]:+ch)*Math.pow(2,i);} return (s%11)%10;
+}
+const numCont=(pid,o)=>{const p='GPSU'+String(pid*100+o).padStart(6,'0').slice(-6); return p+iso6346(p);};
+const lacre=(pid,o)=>'BR'+String(2600000+pid*100+o).padStart(7,'0');
+
+/* ===== ESTADO ===== */
+const CAMPOS_PROJ=['pid','ref','titulo','cliente','consig','rota','inc','fx','seg','entrega','diaSaida','ledgerK','tamper','cotAprovada','itens','P','srv'];
+const novoProj=d=>({...JSON.parse(JSON.stringify(d)),P:{...PARAM_PADRAO,...(d.P||{})},tamper:-1});
+const PADRAO=()=>({aba:'painel',volSel:1,tema:'auto',ult:{},usuario:'',proj:DEMOS[0].ref,projs:Object.fromEntries(DEMOS.map(d=>[d.ref,novoProj(d)]))});
+let S;
+try{
+  const g=JSON.parse(localStorage.getItem('gpscomex3')||'null');
+  S=PADRAO();
+  if(g){ const locais=g.projs&&Object.keys(g.projs).length?g.projs:{}; Object.assign(S,g,{projs:{...S.projs,...locais}}); }
+  if(!S.projs[S.proj]) S.proj=Object.keys(S.projs)[0];
+}catch(e){ S=PADRAO(); }
+const PJ=()=>S.projs[S.proj]||Object.values(S.projs)[0];
+for(const k of CAMPOS_PROJ) Object.defineProperty(S,k,{get:()=>PJ()[k],set:v=>{PJ()[k]=v;},enumerable:false,configurable:true});
+function fixarProxy(){ for(const k of CAMPOS_PROJ) Object.defineProperty(S,k,{get:()=>PJ()[k],set:v=>{PJ()[k]=v;},enumerable:false,configurable:true}); }
+const salvar=()=>{try{ const c={...S,projs:Object.fromEntries(Object.entries(S.projs).filter(([,p])=>!p.srv))}; localStorage.setItem('gpscomex3',JSON.stringify(c)); }catch(e){}};
+let MODO='local', SRV={lista:[]};
+const ETAPAS=[['PEDIDO','Pedido de exportação registrado','TransactionEvent','accepting','PLANEJADO',null],
+ ['PASSAPORTES','Passaportes digitais dos volumes emitidos','ObjectEvent','commissioning','PLANEJADO',null],
+ ['FAT','FAT aprovado pelo cliente','ObjectEvent','inspecting','FAT_APROVADO','fat'],
+ ['EMBALAGEM','Embalagem concluída e inspecionada','ObjectEvent','packing','EMBALADO','insp'],
+ ['ESTUFAGEM','Estufagem, peação e lacre dos contêineres','AggregationEvent','loading','ESTUFADO','estuf'],
+ ['DUE','NF-e de exportação e DU-E registradas','TransactionEvent','accepting','DESPACHADO',null],
+ ['GATE_IN','Gate-in no terminal e VGM transmitido','ObjectEvent','arriving','NO_TERMINAL','cut'],
+ ['EMBARQUE','Embarque — navio zarpou','ObjectEvent','departing','EMBARCADO','etd'],
+ ['EBL','eBL emitido e transferido (DCSA)','TransactionEvent','shipping','EMBARCADO','bl'],
+ ['CHEGADA','Chegada ao porto de destino','ObjectEvent','arriving','CHEGOU','eta'],
+ ['DESEMBARACO','Desembaraço de importação concluído','TransactionEvent','accepting','DESEMBARACADO','lib'],
+ ['ENTREGA','Entrega no site e aceite do cliente','ObjectEvent','receiving','ENTREGUE','ent']];
+const ESTADOS={RASCUNHO:'Rascunho',PLANEJADO:'Planejado',FAT_APROVADO:'FAT aprovado',EMBALADO:'Embalado',ESTUFADO:'Estufado e lacrado',DESPACHADO:'DU-E registrada',NO_TERMINAL:'No terminal',EMBARCADO:'Embarcado',CHEGOU:'Chegou ao destino',DESEMBARACADO:'Desembaraçado',ENTREGUE:'Entregue'};
+const estado=()=>S.ledgerK>=0?ETAPAS[Math.min(S.ledgerK,ETAPAS.length-1)][4]:'RASCUNHO';
+const congelado=()=>S.ledgerK>=3;   // espelha INV-CMX-010: carga congela após EMBALAGEM
+let R={};
+
+const GRUPOS=[
+ {k:'painel',t:'Visão geral',d:'status do embarque',ic:'painel',abas:[['painel','Visão geral']]},
+ {k:'plan',t:'Planejar',d:'carga e embalagem',ic:'plan',abas:[['carga','Carga'],['emb','Embalagem e marcação']]},
+ {k:'embq',t:'Embarcar',d:'contêineres e frete',ic:'emb',abas:[['estuf','Estufagem'],['cot','Cotação e Incoterm']]},
+ {k:'acomp',t:'Acompanhar',d:'agenda e ledger',ic:'acomp',abas:[['cron','Cronograma'],['bc','Blockchain']]},
+ {k:'docs',t:'Documentar',d:'compliance e fontes',ic:'docs',abas:[['doc','Documentos'],['ref','Referências']]}
+];
+const grupoDe=a=>GRUPOS.find(g=>g.abas.some(x=>x[0]===a))||GRUPOS[0];
+const ABAS=[['carga','Carga e equipamentos'],['emb','Embalagem e marcação'],['estuf','Estufagem de contêineres'],['cot','Cotação e Incoterm'],['cron','Cronograma e agenda'],['bc','Rastreabilidade blockchain'],['doc','Documentos e compliance'],['ref','Referências da pesquisa']];
+
+/* ===== CRONOGRAMA ===== */
+function cronograma(){
+  const rota=ROTAS.find(r=>r.id===S.rota); const esp=R.est.bins.some(b=>CONT[b.T].top);
+  const alvo=parse(S.entrega); const desemb=5, rodoD=2, seguranca=3, tb=rota.transb?4:0;
+  let etd=addD(alvo,-(rota.tt+tb+desemb+rodoD+seguranca));
+  while(etd.getDay()!==+S.diaSaida) etd=addD(etd,-1);
+  const eta=addD(etd,rota.tt+tb); const lib=proxUtil(addD(eta,desemb)); const ent=wdFwd(lib,rodoD);
+  const cutoff=wdBack(etd,2), draft=wdBack(etd,3), estuf=wdBack(cutoff,1), insp=wdBack(estuf,1);
+  const embDias=Math.max(3,Math.ceil(R.vols.length/4)); const embIni=wdBack(insp,embDias);
+  const fat=wdBack(embIni,1), caixas=wdBack(embIni,6);
+  const booking=addD(etd,-(esp?28:21)), cot=addD(booking,-7);
+  const M=[
+    {k:'cot',d:cot,t:'Cotação e contratação do frete (NVOCC/armador)',f:'pre',crit:true},
+    {k:'book',d:booking,t:'Booking confirmado'+(esp?' — equipamento especial (OT/FR) exige 4 semanas':''),f:'pre',crit:true},
+    {k:'cx',d:caixas,t:'Pedido de caixas ISPM-15 (madeira HT, carimbo IPPC)',f:'pre'},
+    {k:'fat',d:fat,t:'FAT concluído e liberação de qualidade',f:'pre',crit:true},
+    {k:'emb',d:embIni,t:'Início da embalagem ('+embDias+' dias úteis, '+R.vols.length+' volumes)',f:'pre'},
+    {k:'insp',d:insp,t:'Inspeção de embalagem, fotos e indicadores de choque/inclinação',f:'pre'},
+    {k:'estuf',d:estuf,t:'Estufagem na fábrica, peação, lacre + NF-e e registro da DU-E',f:'pre',crit:true},
+    {k:'draft',d:draft,t:'Deadline draft (instrução de embarque / SI)',f:'pre'},
+    {k:'cut',d:cutoff,t:'Cut-off de carga e VGM (SOLAS) no terminal',f:'pre',crit:true},
+    {k:'etd',d:etd,t:'ETD — saída do navio em Portonave, Navegantes/SC',f:'mar',crit:true},
+    {k:'bl',d:addD(etd,2),t:'Emissão do eBL (padrão DCSA) e envio de documentos',f:'mar'},
+    ...(rota.transb?[{k:'tb',d:addD(etd,Math.round(rota.tt/2)),t:'Transbordo (hub)',f:'mar'}]:[]),
+    {k:'eta',d:eta,t:'ETA — chegada em '+rota.porto,f:'mar',crit:true},
+    {k:'lib',d:lib,t:'Desembaraço de importação e liberação do terminal',f:'pos'},
+    {k:'ent',d:ent,t:'Entrega no site do cliente',f:'pos',crit:true}
+  ];
+  // realizados: pelo ledger (etapa → marco e todos os anteriores) e pela cotação aprovada
+  let idx=-1; for(let k=0;k<=S.ledgerK&&k<ETAPAS.length;k++){ const mc=ETAPAS[k][5]; if(mc){ const p=M.findIndex(m=>m.k===mc); if(p>idx) idx=p; } }
+  const reais={}; if(S.srv) (S.srv.marcos||[]).forEach(m=>{ if(m.data_real) reais[m.codigo]=parse(m.data_real); });
+  M.forEach((m,i)=>{ m.real=reais[m.k]||((i<=idx||(S.cotAprovada&&(m.k==='cot'||m.k==='book')))?m.d:null); });
+  for(const m of M){ m.venc=!m.real&&m.f==='pre'&&m.d<HOJE; m.dias=Math.round((m.d-HOJE)/DIA); }
+  const prox=M.find(m=>!m.real); const folga=S.cotAprovada?Math.round((((prox||M[M.length-1]).d)-HOJE)/DIA):Math.round((cot-HOJE)/DIA);
+  return {M,etd,eta,ent,alvo,folga,esp,viavel:!M.some(m=>m.venc),ok:ent<=alvo,prox};
+}
+
+/* ===== RECÁLCULO ===== */
+function recalc(){
+  const rota=ROTAS.find(r=>r.id===S.rota);
+  const P={...S.P,ttRota:rota.tt};
+  R.rota=rota; R.vols=gerarVolumes(S.itens,P,S.pid); R.est=estufar(R.vols,P);
+  R.est.bins.forEach((b,i)=>{b.num=numCont(S.pid,i+1); b.lacre=lacre(S.pid,i+1);});
+  if(S.srv){ const sv={}; (S.srv.volumes||[]).forEach(v=>sv[v.seq]=v.sscc); R.vols.forEach(v=>{if(sv[v.seq]) v.sscc=sv[v.seq];}); (S.srv.conteineres||[]).forEach(c=>{const b=R.est.bins[c.ordem-1]; if(b){b.num=c.numero; b.lacre=c.lacre;}}); }
+  R.cot=cotar(R.est.bins,R.vols,rota,S.inc,+S.fx,+S.seg);
+  R.cron=cronograma();
+  const inc=INCOTERMS[S.inc]; R.vend=0; R.comp=0;
+  for(const k of ['emb','carg','rodo','despE','thcO','frete','seg','thcD','despI','trib','entrega']){
+    const v=R.cot.tot[k]||0; if(inc.v.includes(k)) R.vend+=v; else R.comp+=v;
+  }
+  R.logTot=Object.entries(R.cot.tot).filter(([k])=>k!=='trib').reduce((a,[,v])=>a+v,0);
+}
+
+/* ===== RENDER GERAL ===== */
+function manifesto(){
+  const liq=R.vols.reduce((a,v)=>a+v.kg,0), br=R.vols.reduce((a,v)=>a+v.cx.bruto,0), m3=R.vols.reduce((a,v)=>a+v.cx.m3,0);
+  const cnt={}; R.est.bins.forEach(b=>cnt[b.T]=(cnt[b.T]||0)+1);
+  const c=R.cron; const st=!c.viavel||!c.ok?'alerta':c.folga<10?'atencao':'';
+  $('#manif').innerHTML=`
+   <div class="kpi"><b>${R.vols.length}</b><small>volumes</small></div>
+   <div class="kpi"><b>${nf(liq/1000,2)} t</b><small>peso líquido</small></div>
+   <div class="kpi"><b>${nf(br/1000,2)} t</b><small>peso bruto</small></div>
+   <div class="kpi"><b>${nf(m3,1)} m³</b><small>cubagem embalada</small></div>
+   <div class="kpi ${R.est.sem.length?'alerta':''}"><b>${Object.entries(cnt).map(([t,n])=>n+'×'+t).join(' + ')||'—'}</b><small>equipamentos${R.est.sem.length?' · '+R.est.sem.length+' sem encaixe':''}</small></div>
+   <div class="kpi"><b>${usd(R.vend)}</b><small>custo do vendedor em ${S.inc}</small></div>
+   <div class="kpi"><b>${fD(c.etd)}</b><small>ETD Navegantes</small></div>
+   ${estado()==='ENTREGUE'?'<div class="kpi"><b>12/12</b><small>etapas concluídas</small></div>':`<div class="kpi ${S.cotAprovada?'':st}"><b>${c.folga} d</b><small>${S.cotAprovada?'até o próximo marco':'folga até contratar frete'}</small></div>`}`;
+}
+function nav(){
+  const g=grupoDe(S.aba);
+  const btn=(x,cls)=>`<button data-grupo="${x.k}" ${x.k===g.k?'aria-current="page"':''}><svg class="ic"><use href="#i-${x.ic}"/></svg><span class="nm">${x.t}${cls?'':`<span class="sub">${x.d}</span>`}</span></button>`;
+  $('#nav').innerHTML=GRUPOS.map(x=>btn(x,false)).join('');
+  $('#bottom').innerHTML=GRUPOS.map(x=>btn(x,true)).join('');
+  $('#sub').innerHTML=g.abas.length>1?`<div class="seg" role="tablist">${g.abas.map(([k,t])=>`<button data-aba="${k}" aria-pressed="${S.aba===k}">${t}</button>`).join('')}</div>`:'';
+  $('#sub').style.display=g.abas.length>1?'':'none';
+  $('#chip').innerHTML=`<span class="ref">${esc(S.ref)}</span><span class="rota">→ ${esc(R.rota.nome)}</span><span class="inc">${S.inc}</span>`;
+}
+function rotular(){
+  document.querySelectorAll('#main table').forEach(t=>{
+    t.classList.add('resp');
+    if(!t.parentElement.closest('.rolar,.tab-rolar')){ const w=document.createElement('div'); w.className='tab-rolar'; t.parentNode.insertBefore(w,t); w.appendChild(t); }
+    const hs=[...t.querySelectorAll('thead th')].map(h=>h.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr=>[...tr.children].forEach((td,i)=>td.dataset.l=hs[i]||''));
+    t.querySelectorAll('tfoot td').forEach(td=>td.dataset.l='');
+  });
+}
+function ajustarTabelas(){
+  document.querySelectorAll('#main table.resp').forEach(t=>{
+    t.classList.remove('cartoes');
+    const w=t.closest('.tab-rolar,.rolar')||t.parentElement;
+    if(innerWidth>760 && t.scrollWidth>w.clientWidth+2) t.classList.add('cartoes');
+  });
+}
+let ajT=null; addEventListener('resize',()=>{clearTimeout(ajT); ajT=setTimeout(ajustarTabelas,120);});
+function render(){
+  recalc(); manifesto(); nav();
+  const f={painel:vPainel,carga:vCarga,emb:vEmb,estuf:vEstuf,cot:vCot,cron:vCron,bc:vBC,doc:vDoc,ref:vRef}[S.aba]||vPainel;
+  $('#main').innerHTML=f(); rotular(); ajustarTabelas();
+  if(congelado()&&['carga','emb'].includes(S.aba)) document.querySelectorAll('#main td input,#main td select,#main td button,#main [data-p]').forEach(e=>e.disabled=true);
+  if(MODO==='servidor'){ const r=$('#inRef'); if(r) r.disabled=true; }
+  if(MODO==='servidor'&&!podeOperar()&&['carga','emb','cot','cron'].includes(S.aba)){
+    document.querySelectorAll('#main input,#main select,#main td button').forEach(e=>e.disabled=true);
+    const b=document.createElement('div'); b.className='aviso'; b.innerHTML='<b>Somente leitura</b>Seu perfil permite consultar. Alterações exigem o papel Logística ou Comercial.'; $('#main').prepend(b);
+  }
+  if(S.aba==='bc') construirLedger();
+  salvar();
+}
+
+/* ===== 0. VISÃO GERAL ===== */
+function alertas(){
+  const A=[]; const c=R.cron, rota=R.rota, inc=INCOTERMS[S.inc];
+  if(R.est.sem.length) A.push({n:'crit',t:R.est.sem.length+' volume(s) sem contêiner compatível',d:'Rever divisão das seções ou avaliar breakbulk',aba:'estuf'});
+  if(!c.viavel) A.push({n:'crit',t:'Programação inviável a partir de hoje',d:'Há marcos com data vencida — postergar entrega ou comprimir etapas',aba:'cron'});
+  else if(!S.cotAprovada&&c.folga<10) A.push({n:c.folga<5?'crit':'at',t:`Contratar o frete em ${c.folga} dia(s)`,d:c.esp?'Open Top/Flat Rack exigem booking com 4 semanas':'Cotar com ao menos dois NVOCCs',aba:'cot'});
+  if(!S.cotAprovada) A.push({n:'at',t:'Cotação aguardando aprovação humana',d:'Sem aprovação a estufagem é bloqueada (INV-CMX-022)',aba:'cot'});
+  if(estado()==='ENTREGUE') return [{n:'ok',t:'Embarque entregue e aceito',d:'Ledger fechado com 12 eventos — use como referência de prazo e custo',aba:'bc'}];
+  if(S.inc==='DDP'&&rota.trib>20) A.push({n:'crit',t:`DDP: vendedor assume ${usd(R.cot.tot.trib)} em tributos`,d:'Sobretaxa Section 301 nos EUA — preferir DAP',aba:'cot'});
+  else if(rota.trib>20) A.push({n:'at',t:`Importador paga ~${nf(rota.trib,1)}% no destino`,d:'Impacto na negociação de preço — confirmar HTS e exclusões',aba:'cot'});
+  if(inc.aviso) A.push({n:'at',t:`${S.inc} não é recomendado para contêiner`,d:'ICC sugere FCA, CPT ou CIP',aba:'cot'});
+  if(!congelado()) R.est.bins.filter(b=>b.oh>0||b.oogW).forEach(b=>A.push({n:'at',t:`${CONT[b.T].nome} fora de gabarito`,d:b.oh?`Sobre-altura de ${b.oh} mm — declarar OOG no booking`:'Largura excedente — OOG',aba:'estuf'}));
+  if(!A.length) A.push({n:'ok',t:'Sem pendências críticas',d:'Embarque dentro dos limites de prazo, peso e gabarito',aba:'cron'});
+  return A;
+}
+function linhaTempo(){
+  const c=R.cron; const M=c.M; const t0=Math.min(HOJE,M[0].d), t1=Math.max(c.alvo,M[M.length-1].d);
+  const W=1000,pad=48,CY=102,H=208; const x=d=>pad+(d-t0)/(t1-t0)*(W-2*pad);
+  const crit=M.filter(m=>m.crit); const hx=x(HOJE);
+  const curto={cot:'Cotar frete',book:'Booking',fat:'FAT',estuf:'Estufagem',cut:'Cut-off',etd:'ETD',eta:'ETA',ent:'Entrega'};
+  // 4 faixas de rótulo (2 acima, 2 abaixo); cada rótulo vai para a primeira faixa sem sobreposição
+  const faixas=[{s:-1,n:1},{s:1,n:1},{s:-1,n:2},{s:1,n:2}], fim=faixas.map(()=>-1e9);
+  const rot=crit.map(m=>{const X=x(m.d), txt=curto[m.k]||m.k, w=Math.max(txt.length*8.6,40)+12;
+    let k=faixas.findIndex((f,i)=>fim[i]<X-w/2); if(k<0) k=fim.indexOf(Math.min(...fim));
+    const ax=Math.min(Math.max(X,pad-20+w/2),W-pad+20-w/2); fim[k]=ax+w/2; return {m,X,ax,txt,f:faixas[k]};});
+  const yT=f=>f.s<0?CY-24-(f.n-1)*34:CY+34+(f.n-1)*34, yD=f=>f.s<0?yT(f)-16:yT(f)+16;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Linha do tempo do embarque">
+   <line x1="${pad}" y1="${CY}" x2="${W-pad}" y2="${CY}" stroke="var(--line2)" stroke-width="4" stroke-linecap="round"/>
+   <line x1="${x(c.etd)}" y1="${CY}" x2="${x(M.find(m=>m.k==='eta').d)}" y2="${CY}" stroke="var(--cargo-b)" stroke-width="4"/>
+   ${rot.map(({m,X,ax,txt,f})=>{const y1=CY+f.s*9, y2=f.s<0?yT(f)+6:yT(f)-16;
+     return `<g><line x1="${X}" y1="${y1}" x2="${ax}" y2="${y2}" stroke="var(--line2)"/>
+     <circle cx="${X}" cy="${CY}" r="7" fill="${m.real?'var(--steel)':m.venc?'var(--crit)':'var(--brand)'}" stroke="var(--surface)" stroke-width="2"/>
+     <text x="${ax}" y="${yT(f)}" text-anchor="middle" font-size="15" font-weight="600">${txt}</text>
+     <text x="${ax}" y="${yD(f)}" text-anchor="middle" font-size="12" style="fill:var(--muted)">${String(m.d.getDate()).padStart(2,'0')}/${String(m.d.getMonth()+1).padStart(2,'0')}</text></g>`;}).join('')}
+   <line x1="${hx}" y1="${CY-20}" x2="${hx}" y2="${CY+20}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="3 3"/>
+   <text x="${hx}" y="${CY-24}" text-anchor="middle" font-size="12" font-weight="700">hoje</text>
+   <rect x="${x(c.alvo)-5}" y="${CY-9}" width="10" height="18" fill="none" stroke="var(--ink)" stroke-width="2"/>
+   <text x="${x(c.alvo)}" y="${CY+26}" text-anchor="middle" font-size="11" style="fill:var(--muted)">alvo</text>
+  </svg>`;
+}
+function vPainel(){
+  const c=R.cron; const prox=c.prox||c.M[c.M.length-1];
+  const dProx=Math.round((prox.d-HOJE)/DIA); const feitos=c.M.filter(m=>m.real).length; const fim=estado()==='ENTREGUE';
+  const tl=R.logTot, vend=R.vend-(INCOTERMS[S.inc].v.includes('trib')?R.cot.tot.trib:0);
+  const pv=Math.min(100,vend/tl*100);
+  const crit=!c.viavel||c.folga<5;
+  const A=alertas();
+  return `${carteira()}<div class="hero">
+    <div class="status ${crit&&!fim?'alerta':''}"><span class="faixa" aria-hidden="true"></span>
+      <div class="eyebrow">${fim?'Entregue · '+fD(c.M[c.M.length-1].real||c.ent):'Próximo marco · '+fD(prox.d)} · ${ESTADOS[estado()]}</div>
+      <div class="grande">${fim?'✓':dProx}<small>${fim?' concluído':' dia'+(Math.abs(dProx)===1?'':'s')+(dProx<0?' de atraso':'')}</small></div>
+      <div class="prox">${esc(fim?S.titulo||S.ref:prox.t)}</div>
+      <div class="split" style="background:#454D52;margin-top:16px"><i style="width:${feitos/c.M.length*100}%;background:var(--brand)"></i></div>
+      <div class="eyebrow">${feitos} de ${c.M.length} marcos concluídos · entrega prevista ${fD(c.ent)} · alvo ${fD(c.alvo)}</div>
+    </div>
+    <div class="painel" style="margin:0"><h3>Pendências</h3><div class="alertas">${A.map(a=>`<button class="alerta-it ${a.n}" data-aba="${a.aba}"><i></i><span style="color:inherit"><b>${esc(a.t)}</b><span>${esc(a.d)}</span></span></button>`).join('')}</div></div>
+  </div>
+  <div class="painel"><h3>Linha do tempo</h3><div class="linha-tempo rolar">${linhaTempo()}</div></div>
+  <div class="grid2">
+    <div class="painel"><h3>Custos logísticos em ${S.inc}</h3>
+      <div class="num" style="font-family:var(--ffc);font-size:2rem;font-weight:600">${usd(tl)}</div>
+      <div class="muted peq">${nf(tl/R.cot.fob*100,1)}% do valor FOB de ${usd(R.cot.fob)}, sem tributos no destino</div>
+      <div class="split"><i style="width:${pv}%;background:var(--brand)"></i><i style="width:${100-pv}%;background:var(--steel)"></i></div>
+      <dl class="kv"><dt><span class="tag" style="border-color:var(--brand)">Vendedor</span></dt><dd>${usd(vend)}</dd><dt><span class="tag">Comprador</span></dt><dd>${usd(tl-vend)}</dd><dt>Tributos no destino</dt><dd>${usd(R.cot.tot.trib)} · ${INCOTERMS[S.inc].v.includes('trib')?'vendedor':'comprador'}</dd></dl>
+    </div>
+    <div class="painel"><h3>Carga</h3><dl class="kv">
+      <dt>Equipamentos</dt><dd>${S.itens.reduce((a,i)=>a+i.qtd,0)} itens em ${R.vols.length} volumes</dd>
+      <dt>Maior volume</dt><dd>${(()=>{const v=[...R.vols].sort((a,b)=>b.cx.bruto-a.cx.bruto)[0]; return v?esc(v.tag.split('/')[0])+' · '+nf(v.cx.bruto)+' kg':'—';})()}</dd>
+      <dt>Mais alto</dt><dd>${(()=>{const v=[...R.vols].sort((a,b)=>b.cx.H-a.cx.H)[0]; return v?esc(v.tag.split('/')[0])+' · '+v.cx.H+' mm':'—';})()}</dd>
+      <dt>Embalagem</dt><dd>${nf(R.vols.reduce((a,v)=>a+v.cx.volMad,0),1)} m³ de madeira HT · ${nf(R.vols.reduce((a,v)=>a+v.cx.nDes,0))} un. dessecante</dd>
+      <dt>Trânsito</dt><dd>${R.rota.tt}${R.rota.transb?' + 4':''} dias até ${esc(R.rota.porto)}</dd></dl>
+      <div class="acoes"><button class="btn" data-aba="carga">Editar carga</button><button class="btn" data-aba="doc">Packing list</button></div>
+    </div>
+  </div>
+  <h2>Contêineres</h2>
+  <div class="mini-cont">${R.est.bins.map((b,i)=>`<div class="painel" style="margin:0"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">${CONT[b.T].nome}</h3><span class="peq muted">${b.num}</span></div>
+     <div class="peq muted" style="margin:2px 0 8px">${b.vols.length} volumes · ${nf(b.kg)} kg · piso ${nf(b.areaUso)}%${b.oh?' · <span class="tag crit">OOG +'+b.oh+' mm</span>':''}</div>
+     <div class="plano">${planoTopo(b)}</div></div>`).join('')}</div>
+  <div class="acoes"><button class="btn pri" data-aba="estuf">Ver plano de estufagem</button><button class="btn" data-aba="bc">Abrir ledger</button></div>`;
+}
+
+function resumoLocal(ref){
+  const atual=S.proj; S.proj=ref; recalc(); const r={etd:R.cron.etd,ent:R.cron.ent,conts:R.est.bins.map(b=>b.T).join(' + '),estado:estado(),destino:R.rota.nome,inc:S.inc,titulo:S.titulo,ref,k:S.ledgerK};
+  S.proj=atual; recalc(); return r;
+}
+function carteira(){
+  const cards=MODO==='servidor'
+    ? SRV.lista.map(p=>({ref:p.codigo,id:p.id,titulo:p.titulo,destino:p.destino,inc:p.incoterm,estado:p.estado,etd:p.etd?parse(p.etd):null,conts:p.conteineres||'—',k:p.eventos-1,integro:p.ledger_integro}))
+    : Object.keys(S.projs).map(resumoLocal);
+  return `<div class="carteira" role="list" aria-label="Carteira de embarques">${cards.map(p=>`<button class="proj-card ${p.ref===S.proj?'ativo':''}" data-proj="${p.ref}" ${p.id?`data-pid="${p.id}"`:''} role="listitem">
+    <span class="pc-top"><b>${p.ref}</b><span class="tag ${p.estado==='ENTREGUE'?'ok':['EMBARCADO','CHEGOU','DESEMBARACADO','NO_TERMINAL'].includes(p.estado)?'at':''}">${ESTADOS[p.estado]||p.estado}</span></span>
+    <span class="pc-tit">${esc(p.titulo||'')}</span>
+    <span class="pc-meta">${esc(p.destino)} · ${p.inc} · ${p.conts}</span>
+    <span class="split" aria-hidden="true"><i style="width:${Math.max(4,(p.k+1)/12*100)}%;background:var(--brand)"></i></span>
+    <span class="pc-meta">${p.k+1}/12 etapas · ETD ${p.etd?fD(p.etd):'—'}${p.integro===false?' · <b style="color:var(--crit)">ledger inválido</b>':''}</span>
+  </button>`).join('')}${pode('comex-comercial')?'<button class="proj-card novo" data-novo role="listitem"><svg class="ic"><use href="#i-plus"/></svg>Novo embarque</button>':''}</div>`;
+}
+const itensParaApi=itens=>itens.map(i=>({codigo:String(i.id).slice(0,20),tag:i.tag,nome:i.nome,qtd:+i.qtd,secoes:+i.secoes,comp_mm:+i.L,larg_mm:+i.W,alt_mm:+i.H,peso_kg:+i.kg,valor_usd:+i.valor,ncm:i.ncm,embalagem:i.emb,pilha_max:+i.pilha}));
+const NV={clientes:[]};
+function proximoCodigo(){
+  const ano=String(HOJE.getFullYear()).slice(2); const cods=MODO==='servidor'?SRV.lista.map(p=>p.codigo):Object.keys(S.projs);
+  const n=Math.max(0,...cods.filter(c=>c.startsWith('CMX-'+ano+'-')).map(c=>+c.slice(-4)))+1; return 'CMX-'+ano+'-'+String(n).padStart(4,'0');
+}
+async function abrirNovo(){
+  $('#nvCod').value=proximoCodigo(); $('#nvEnt').value=iso(addD(HOJE,90)); $('#nvTit').value=''; $('#nvCli').value=''; $('#nvPais').value=''; $('#nvErro').hidden=true;
+  $('#nvRota').innerHTML=ROTAS.map(r=>`<option value="${r.id}">${esc(r.nome)}</option>`).join(''); $('#nvRota').value=S.rota;
+  $('#nvInc').innerHTML=Object.keys(INCOTERMS).map(k=>`<option>${k}</option>`).join(''); $('#nvInc').value='DAP';
+  const lista=MODO==='servidor'?SRV.lista.map(p=>[p.codigo,p.titulo]):Object.values(S.projs).map(p=>[p.ref,p.titulo]);
+  $('#nvBase').innerHTML='<option value="_modelo">Modelo — pacote elétrico completo (CCM, QGBT, PLC, MT…)</option><option value="_unico">Um painel em branco para detalhar depois</option>'+lista.map(([c,tt])=>`<option value="${c}">Copiar itens de ${c} — ${esc(tt||'')}</option>`).join('');
+  try{ NV.clientes=MODO==='servidor'?await api('/clientes'):[...new Map(Object.values(S.projs).map(p=>[p.cliente,{nome:p.cliente,pais:(ROTAS.find(r=>r.id===p.rota)||{}).pais||''}])).values()]; }catch(e){ NV.clientes=[]; }
+  $('#nvCliLista').innerHTML=NV.clientes.map(c=>`<option value="${esc(c.nome)}">`).join('');
+  $('#dlgNovo').showModal(); $('#nvTit').focus();
+}
+async function itensBase(v){
+  if(v==='_modelo') return JSON.parse(JSON.stringify(DEMOS[0].itens));
+  if(v==='_unico') return [{id:'P01',nome:'Painel elétrico',tag:'P-01',qtd:1,secoes:1,L:800,W:600,H:2000,kg:300,valor:20000,ncm:'8537.10.90',emb:'crate',pilha:1}];
+  if(MODO==='servidor'){ const d=await api('/projetos/'+SRV.lista.find(p=>p.codigo===v).id); return projetoDoServidor(d).itens; }
+  return JSON.parse(JSON.stringify(S.projs[v].itens));
+}
+async function criarEmbarque(){
+  const erro=m=>{const e=$('#nvErro'); e.hidden=false; e.textContent=m;};
+  const cod=$('#nvCod').value.trim().toUpperCase(), tit=$('#nvTit').value.trim(), cli=$('#nvCli').value.trim(), pais=$('#nvPais').value.trim(), ent=$('#nvEnt').value, rota=$('#nvRota').value, inc=$('#nvInc').value;
+  if(!/^CMX-\d{2}-\d{4}$/.test(cod)) return erro('Código deve seguir o padrão CMX-AA-NNNN.');
+  if(tit.length<3) return erro('Informe o título do embarque.');
+  if(cli.length<2) return erro('Informe o cliente.');
+  if(!ent||parse(ent)<=HOJE) return erro('A data de entrega deve ser futura.');
+  const existente=NV.clientes.find(c=>c.nome.toLowerCase()===cli.toLowerCase());
+  if(!existente&&!pais) return erro('Cliente novo: informe o país.');
+  const btn=$('#btnCriar'); btn.disabled=true;
+  try{
+    const itens=await itensBase($('#nvBase').value);
+    if(MODO==='servidor'){
+      const c=existente&&existente.id?existente:await api('/clientes',{method:'POST',body:{nome:cli,pais}});
+      const r=await api('/projetos',{method:'POST',body:{codigo:cod,titulo:tit,cliente_id:c.id,consignatario:cli.toUpperCase(),rota_id:rota,incoterm:inc,cambio_usd_brl:+S.fx||5.1,seguro_pct:+S.seg||0.25,entrega_alvo:ent,dia_saida:4,parametros:{},itens:itensParaApi(itens)}});
+      await carregarProjetoSrv(r.id);
+    } else {
+      if(S.projs[cod]) return erro('Já existe um embarque com esse código.');
+      const pid=Math.max(...Object.values(S.projs).map(p=>p.pid))+1;
+      S.projs[cod]=novoProj({pid,ref:cod,titulo:tit,cliente:cli,consig:cli.toUpperCase(),rota,inc,fx:S.fx||5.1,seg:S.seg||0.25,entrega:ent,diaSaida:4,ledgerK:-1,cotAprovada:false,itens}); S.proj=cod;
+    }
+    $('#dlgNovo').close(); S.aba='carga'; S.volSel=1; popularFolha(); render(); window.scrollTo(0,0);
+    toast(`Embarque ${cod} criado${MODO==='servidor'?' no PostgreSQL':''} — revise a carga`,'ok');
+  }catch(e){ erro(e.message); }
+  finally{ btn.disabled=false; }
+}
+
+/* ===== AUTENTICAÇÃO OIDC (Keycloak) — Authorization Code + PKCE S256 ===== */
+const AUTH={on:false,cfg:null,tok:null,user:null,timer:null};
+const b64url=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const aleatorio=n=>b64url(crypto.getRandomValues(new Uint8Array(n)));
+const claims=jwt=>{try{return JSON.parse(decodeURIComponent(escape(atob(jwt.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))));}catch(e){return {};}};
+const urlRetorno=()=>location.origin+location.pathname;
+function guardarTokens(r){
+  const c=claims(r.access_token);
+  AUTH.tok={access:r.access_token,refresh:r.refresh_token,id:r.id_token||(AUTH.tok&&AUTH.tok.id),exp:c.exp*1000};
+  try{sessionStorage.setItem('cmx_tok',JSON.stringify(AUTH.tok));}catch(e){}
+  AUTH.user={login:c.preferred_username||c.email||c.sub,nome:c.name||c.preferred_username,papeis:((c.realm_access||{}).roles||[]).filter(p=>p.startsWith('comex-'))};
+  clearTimeout(AUTH.timer); AUTH.timer=setTimeout(renovarToken,Math.max(10000,AUTH.tok.exp-Date.now()-60000));
+}
+async function tokenEndpoint(corpo){
+  const r=await fetch(AUTH.cfg.issuer+'/protocol/openid-connect/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:AUTH.cfg.client_id,...corpo})});
+  const j=await r.json(); if(!r.ok) throw new Error(j.error_description||j.error||'falha no login'); return j;
+}
+async function renovarToken(){
+  if(!AUTH.tok||!AUTH.tok.refresh) return false;
+  try{ guardarTokens(await tokenEndpoint({grant_type:'refresh_token',refresh_token:AUTH.tok.refresh})); return true; }
+  catch(e){ AUTH.tok=null; try{sessionStorage.removeItem('cmx_tok');}catch(_){ } mostrarLogin('Sua sessão expirou. Entre novamente.'); return false; }
+}
+async function entrar(){
+  const verifier=aleatorio(48), state=aleatorio(16), nonce=aleatorio(16);
+  const challenge=b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));
+  sessionStorage.setItem('cmx_pkce',JSON.stringify({verifier,state,aba:S.aba}));
+  location.assign(AUTH.cfg.issuer+'/protocol/openid-connect/auth?'+new URLSearchParams({client_id:AUTH.cfg.client_id,response_type:'code',scope:'openid profile email',
+    redirect_uri:urlRetorno(),code_challenge:challenge,code_challenge_method:'S256',state,nonce,ui_locales:'pt-BR'}));
+}
+function sair(){
+  const id=AUTH.tok&&AUTH.tok.id; AUTH.tok=null; try{sessionStorage.removeItem('cmx_tok');}catch(e){}
+  location.assign(AUTH.cfg.issuer+'/protocol/openid-connect/logout?'+new URLSearchParams({client_id:AUTH.cfg.client_id,post_logout_redirect_uri:urlRetorno(),...(id?{id_token_hint:id}:{})}));
+}
+function mostrarLogin(msg){ const e=$('#loginErro'); if(e){ e.hidden=!msg; e.textContent=msg||''; } $('#telaLogin').hidden=false; }
+async function iniciarAuth(){
+  try{ AUTH.cfg=await (await fetch(API+'/config',{cache:'no-store'})).json(); }catch(e){ return true; }
+  AUTH.on=!!AUTH.cfg.auth; if(!AUTH.on) return true;
+  const q=new URLSearchParams(location.search);
+  if(q.get('error')){ history.replaceState(null,'',urlRetorno()); mostrarLogin('Login não concluído: '+(q.get('error_description')||q.get('error'))); return false; }
+  if(q.get('code')){
+    const pk=JSON.parse(sessionStorage.getItem('cmx_pkce')||'{}'); sessionStorage.removeItem('cmx_pkce');
+    history.replaceState(null,'',urlRetorno());
+    if(!pk.state||pk.state!==q.get('state')){ mostrarLogin('Resposta de login inválida (state não confere). Tente de novo.'); return false; }
+    try{ guardarTokens(await tokenEndpoint({grant_type:'authorization_code',code:q.get('code'),redirect_uri:urlRetorno(),code_verifier:pk.verifier})); if(pk.aba) S.aba=pk.aba; return true; }
+    catch(e){ mostrarLogin(e.message); return false; }
+  }
+  try{ const g=JSON.parse(sessionStorage.getItem('cmx_tok')||'null'); if(g){ AUTH.tok=g; if(g.exp-Date.now()>30000){ guardarTokens({access_token:g.access,refresh_token:g.refresh,id_token:g.id}); return true; } if(await renovarToken()) return true; } }catch(e){}
+  mostrarLogin(); return false;
+}
+const pode=p=>MODO!=='servidor'||!AUTH.on||(AUTH.user&&(AUTH.user.papeis.includes(p)||AUTH.user.papeis.includes('comex-admin')));
+const podeOperar=()=>pode('comex-logistica')||pode('comex-comercial');
+const NOMES_PAPEL={'comex-leitura':'Leitura','comex-logistica':'Logística','comex-comercial':'Comercial','comex-admin':'Administração'};
+function mostrarSessao(){
+  const b=$('#usr'), s=$('#sessao'); const u=AUTH.on&&AUTH.user;
+  b.hidden=!u; s.hidden=!u; if(!u) return;
+  const ini=(u.nome||u.login).split(/[\s.]+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('');
+  $('#usrAv').textContent=ini; $('#usrN').textContent=u.nome||u.login;
+  s.innerHTML=`<div><b>${esc(u.nome||u.login)}</b><span class="peq muted">${esc(u.login)}</span><div class="papeis">${(u.papeis.length?u.papeis:['sem papel COMEX']).map(p=>`<span class="tag">${NOMES_PAPEL[p]||p}</span>`).join('')}</div></div><div class="sessao-acoes">${AUTH.cfg.usuarios&&u.papeis.includes('comex-admin')?'<button class="btn" id="btnUsuarios">Usuários</button>':''}<button class="btn" id="btnSair">Sair</button></div>`;
+}
+
+/* ===== GESTÃO DE USUÁRIOS (comex-admin → API → Keycloak Admin API) ===== */
+const USR={lista:[],busca:''};
+const ORDEM_PAPEIS=['comex-leitura','comex-logistica','comex-comercial','comex-admin'];
+const chkPapeis=(sel,dis)=>ORDEM_PAPEIS.map(p=>`<label><input type="checkbox" value="${p}" ${sel.includes(p)?'checked':''} ${dis?'disabled':''}>${NOMES_PAPEL[p]}</label>`).join('');
+function mostrarSenha(login,senha){
+  const b=$('#usrSenha'); b.hidden=false;
+  b.innerHTML=`<b>Senha temporária de ${esc(login)}</b>Entregue por um canal seguro. Ela aparece só agora e será trocada no primeiro acesso.<code class="senha-tmp">${esc(senha)}</code><div class="acoes" style="margin:8px 0 0"><button class="btn mini" data-copiar="${esc(senha)}">Copiar</button></div>`;
+  b.scrollIntoView({block:'nearest'});
+}
+function desenharUsuarios(){
+  const q=USR.busca.toLowerCase(); const eu=AUTH.user&&AUTH.user.login;
+  const l=USR.lista.filter(u=>!q||(u.nome+' '+u.login+' '+(u.email||'')).toLowerCase().includes(q));
+  $('#usrLista').innerHTML=l.length?l.map(u=>{const proprio=u.login===eu; return `<div class="usr-card ${u.ativo?'':'inativo'}" data-uid="${u.id}">
+    <div class="usr-hd"><div><b>${esc(u.nome)}${proprio?' <span class="tag">você</span>':''}</b><span class="peq muted">${esc(u.email||u.login)}</span></div>
+      <span class="tag">${u.ativo?(u.pendente.includes('UPDATE_PASSWORD')?'aguardando 1º acesso':'ativo'):'desativado'}</span></div>
+    <div class="usr-papeis" data-papeis="${u.id}">${chkPapeis(u.papeis,false)}</div>
+    <div class="acoes" style="margin:0"><button class="btn mini" data-usrsalvar="${u.id}">Salvar papéis</button><button class="btn mini" data-usrsenha="${u.id}">Nova senha temporária</button>${proprio?'':`<button class="btn mini" data-usrativo="${u.id}">${u.ativo?'Desativar':'Reativar'}</button>`}</div></div>`;}).join('')
+   :'<p class="muted">Nenhum usuário encontrado.</p>';
+}
+async function abrirUsuarios(){
+  $('#cfg').close(); $('#usrSenha').hidden=true; $('#unErro').hidden=true; $('#unPapeis').innerHTML=chkPapeis(['comex-leitura'],false);
+  $('#dlgUsr').showModal(); $('#usrLista').innerHTML='<p class="muted">Carregando…</p>';
+  try{ USR.lista=await api('/usuarios'); desenharUsuarios(); }catch(e){ $('#usrLista').innerHTML=`<div class="aviso crit"><b>Não foi possível listar</b>${esc(e.message)}</div>`; }
+}
+const papeisMarcados=el=>[...el.querySelectorAll('input:checked')].map(i=>i.value);
+function trocarUsuario(u){ const i=USR.lista.findIndex(x=>x.id===u.id); if(i>=0) USR.lista[i]=u; else USR.lista.push(u); desenharUsuarios(); }
+async function criarUsuario(){
+  const err=$('#unErro'); err.hidden=true;
+  const body={primeiro_nome:$('#unNome').value.trim(),sobrenome:$('#unSob').value.trim(),email:$('#unEmail').value.trim(),papeis:papeisMarcados($('#unPapeis'))};
+  if(!body.primeiro_nome||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.email)){ err.hidden=false; err.textContent='Informe nome e um e-mail válido.'; return; }
+  if(!body.papeis.length){ err.hidden=false; err.textContent='Marque ao menos um papel.'; return; }
+  const b=$('#btnUsrCriar'); b.disabled=true;
+  try{ const u=await api('/usuarios',{method:'POST',body}); const {senha_temporaria,...resto}=u; trocarUsuario(resto);
+    ['#unNome','#unSob','#unEmail'].forEach(s=>$(s).value=''); $('#usrNovoBox').open=false; mostrarSenha(u.login,senha_temporaria); toast('Usuário criado','ok'); }
+  catch(e){ err.hidden=false; err.textContent=e.message; }
+  finally{ b.disabled=false; }
+}
+async function alterarUsuario(uid,body,msg){
+  try{ trocarUsuario(await api('/usuarios/'+uid,{method:'PATCH',body})); toast(msg,'ok'); }catch(e){ toast(e.message,'crit'); desenharUsuarios(); }
+}
+
+/* ===== SERVIDOR (API FastAPI + PostgreSQL) ===== */
+const API='api';
+async function api(path,opt={},tentativa=0){
+  const h={'Content-Type':'application/json'}; if(AUTH.on&&AUTH.tok) h.Authorization='Bearer '+AUTH.tok.access;
+  const r=await fetch(API+path,{method:opt.method||'GET',headers:h,body:opt.body!==undefined?JSON.stringify(opt.body):undefined,cache:'no-store'});
+  if(r.status===401&&AUTH.on&&!tentativa&&await renovarToken()) return api(path,opt,1);
+  const t=await r.text(); let j; try{j=JSON.parse(t);}catch(e){j={erro:t};}
+  if(!r.ok) throw new Error(j.erro||(typeof j.detail==='string'?j.detail:j.detail?j.detail.map(x=>x.msg||x).join('; '):'HTTP '+r.status));
+  return j;
+}
+async function detectarServidor(){
+  try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),2500); const r=await fetch(API+'/saude',{signal:c.signal,cache:'no-store'}); clearTimeout(t);
+    if(!r.ok) return false; const j=await r.json(); return j.ok===true; }catch(e){ return false; }
+}
+function projetoDoServidor(d){
+  const p=d.projeto; const ap=d.cotacoes.find(c=>c.status==='APROVADA');
+  return {pid:p.id,ref:p.codigo,titulo:p.titulo,cliente:d.cliente.nome,consig:p.consignatario,rota:p.rota_id,inc:p.incoterm,fx:p.cambio_usd_brl,seg:p.seguro_pct,
+    entrega:p.entrega_alvo,diaSaida:p.dia_saida,ledgerK:d.ledger.length-1,cotAprovada:!!ap,tamper:-1,P:{...PARAM_PADRAO,...p.parametros},srv:d,
+    itens:d.itens.map(i=>({id:i.codigo,nome:i.nome,tag:i.tag,qtd:i.qtd,secoes:i.secoes,L:i.comp_mm,W:i.larg_mm,H:i.alt_mm,kg:i.peso_kg,valor:i.valor_usd,ncm:i.ncm,emb:i.embalagem,pilha:i.pilha_max}))};
+}
+async function carregarProjetoSrv(id){
+  const d=await api('/projetos/'+id); const pd=projetoDoServidor(d); S.projs[pd.ref]=pd; S.proj=pd.ref;
+  SRV.lista=await api('/projetos'); popularFolha();
+}
+async function iniciarServidor(){
+  SRV.lista=await api('/projetos'); if(!SRV.lista.length) throw new Error('sem projetos');
+  const alvo=SRV.lista.find(p=>p.codigo===S.proj)||SRV.lista[0];
+  const d=await api('/projetos/'+alvo.id); const pd=projetoDoServidor(d);
+  S.projs={[pd.ref]:pd}; S.proj=pd.ref; MODO='servidor';
+}
+const SYNC={itens:false,patch:{},t:null};
+function agendarSync(tipo,campo,valor){
+  if(MODO!=='servidor') return;
+  if(tipo==='itens') SYNC.itens=true; else SYNC.patch[campo]=valor;
+  clearTimeout(SYNC.t); SYNC.t=setTimeout(sincronizar,700);
+}
+async function sincronizar(){
+  const id=S.pid, itens=SYNC.itens, patch=SYNC.patch; SYNC.itens=false; SYNC.patch={};
+  try{
+    if(itens) await api(`/projetos/${id}/itens`,{method:'PUT',body:itensParaApi(S.itens)});
+    if(Object.keys(patch).length) await api(`/projetos/${id}`,{method:'PATCH',body:patch});
+    toast('Salvo e recalculado no PostgreSQL','ok');
+  }catch(e){ toast(e.message,'crit'); }
+  try{ await carregarProjetoSrv(id); }catch(e){}
+  render();
+}
+let toastT=null;
+function toast(msg,tipo){ const t=$('#toast'); if(!t) return; t.textContent=msg; t.className='toast '+(tipo||''); t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,tipo==='crit'?6000:2600); }
+function popularFolha(){
+  const sp=$('#selProj'); if(sp){ const lista=MODO==='servidor'?SRV.lista.map(p=>[p.codigo,p.codigo+' — '+p.destino]):Object.values(S.projs).map(p=>[p.ref,p.ref+' — '+(ROTAS.find(r=>r.id===p.rota)||{}).nome]);
+    sp.innerHTML=lista.map(([v,t])=>`<option value="${v}">${esc(t)}</option>`).join(''); sp.value=S.proj; }
+  $('#selRota').value=S.rota; $('#selInc').value=S.inc; $('#inFx').value=S.fx;
+  $('#selRota').disabled=congelado()||!podeOperar(); $('#selInc').disabled=!podeOperar(); $('#inFx').disabled=!podeOperar(); $('#btnReset').hidden=MODO==='servidor';
+  const m=$('#modo'); if(m){ m.textContent=MODO==='servidor'?'PostgreSQL':'demonstração'; m.className='modo '+(MODO==='servidor'?'srv':''); m.title=MODO==='servidor'?'Conectado à API: dados persistidos no banco':'Sem API: dados no navegador (modo demonstração)'; }
+}
+async function trocarProjeto(ref,pid){
+  if(MODO==='servidor'){ try{ await carregarProjetoSrv(pid||SRV.lista.find(p=>p.codigo===ref).id); }catch(e){ toast(e.message,'crit'); } }
+  else S.proj=ref;
+  S.volSel=1; popularFolha(); render(); window.scrollTo(0,0);
+}
+
+async function conectarServidor(){
+  try{ await iniciarServidor(); $('#telaLogin').hidden=true; }
+  catch(e){ MODO='local'; S=Object.assign(PADRAO(),{aba:S.aba,tema:S.tema,ult:S.ult}); fixarProxy(); toast('Não foi possível carregar do banco: '+e.message,'crit'); }
+  mostrarSessao(); popularFolha(); render();
+}
+
+/* ===== DOCUMENTOS: emissão, anexo e download com verificação ===== */
+const hexHash=async buf=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',buf))].map(b=>b.toString(16).padStart(2,'0')).join('');
+async function emitirDoc(tipo){
+  const inp=document.querySelector(`[data-docnum="${tipo}"]`); const num=(inp&&inp.value||'').trim();
+  if(num.length<2){ toast('Informe o número do documento','crit'); if(inp) inp.focus(); return; }
+  if(MODO==='servidor'){
+    try{ await api(`/projetos/${S.pid}/documentos/${tipo}`,{method:'PATCH',body:{status:'EMITIDO',numero:num}}); await carregarProjetoSrv(S.pid); toast('Documento emitido e gravado','ok'); }
+    catch(e){ toast(e.message,'crit'); }
+  } else { const pd=PJ(); pd.docs=pd.docs||{}; pd.docs[tipo]={...(pd.docs[tipo]||{}),status:'EMITIDO',numero:num,emitido_por:'demonstração',emitido_em:new Date().toISOString()}; salvar(); toast('Documento emitido (demonstração)','ok'); }
+  render();
+}
+async function anexarDoc(tipo,f){
+  if(f.size>10485760){ toast('Arquivo acima de 10 MB','crit'); return; }
+  if(!/\.(pdf|png|jpe?g|xml|xlsx|docx)$/i.test(f.name)){ toast('Aceitos: PDF, PNG, JPG, XML, XLSX ou DOCX','crit'); return; }
+  if(MODO==='servidor'){
+    const fd=new FormData(); fd.append('arquivo',f,f.name); const h={}; if(AUTH.on&&AUTH.tok) h.Authorization='Bearer '+AUTH.tok.access;
+    try{
+      let r=await fetch(`${API}/projetos/${S.pid}/documentos/${tipo}/arquivos`,{method:'POST',headers:h,body:fd});
+      if(r.status===401&&AUTH.on&&await renovarToken()){ h.Authorization='Bearer '+AUTH.tok.access; r=await fetch(`${API}/projetos/${S.pid}/documentos/${tipo}/arquivos`,{method:'POST',headers:h,body:fd}); }
+      const j=await r.json(); if(!r.ok) throw new Error(j.erro||j.detail||('HTTP '+r.status));
+      const local=await hexHash(await f.arrayBuffer());
+      await carregarProjetoSrv(S.pid); render();
+      toast(local===j.sha256?`v${j.versao} gravada — SHA-256 ${j.sha256.slice(0,12)}… confere com o arquivo enviado`:'Atenção: hash do banco difere do arquivo local',local===j.sha256?'ok':'crit');
+    }catch(e){ toast(e.message,'crit'); }
+  } else {
+    const sha=await hexHash(await f.arrayBuffer()); const pd=PJ(); pd.docs=pd.docs||{}; const st=pd.docs[tipo]||{}; const vs=st.versoes||[];
+    vs.unshift({versao:(vs[0]?vs[0].versao:0)+1,nome_arquivo:f.name,tamanho:f.size,sha256:sha,enviado_por:'demonstração',enviado_em:new Date().toISOString()});
+    pd.docs[tipo]={...st,versoes:vs}; salvar(); render(); toast(`v${vs[0].versao} registrada (demonstração) — SHA-256 ${sha.slice(0,12)}…`,'ok');
+  }
+}
+async function baixarDoc(tipo,versao){
+  const h={}; if(AUTH.on&&AUTH.tok) h.Authorization='Bearer '+AUTH.tok.access;
+  try{
+    const r=await fetch(`${API}/projetos/${S.pid}/documentos/${tipo}/arquivos/${versao}`,{headers:h,cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const buf=await r.arrayBuffer(); const sha=await hexHash(buf); const esperado=r.headers.get('X-Content-SHA256');
+    const v=(S.srv.arquivos||[]).find(a=>a.tipo===tipo&&a.versao===versao);
+    if(sha!==esperado||(v&&v.sha256!==sha)){ toast('Integridade NÃO confere — arquivo não foi salvo','crit'); return; }
+    const url=URL.createObjectURL(new Blob([buf],{type:r.headers.get('Content-Type')||'application/octet-stream'}));
+    const a=document.createElement('a'); a.href=url; a.download=v?v.nome_arquivo:`${tipo}-v${versao}`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast(`Download v${versao}: SHA-256 recalculado confere (${sha.slice(0,12)}…)`,'ok');
+  }catch(e){ toast(e.message,'crit'); }
+}
+
+/* ===== TEMA E PWA ===== */
+function aplicarTema(){
+  const r=document.documentElement; if(S.tema==='auto') delete r.dataset.theme; else r.dataset.theme=S.tema;
+  const escuro=S.tema==='dark'||(S.tema==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>m.setAttribute('content',S.tema==='auto'?((m.getAttribute('media')||'').includes('dark')?'#121517':'#2D3336'):(escuro?'#121517':'#2D3336')));
+  const ic={auto:'auto',light:'sol',dark:'lua'}[S.tema]; const b=$('#btnTema');
+  if(b){b.innerHTML=`<svg class="ic"><use href="#i-${ic}"/></svg>`; b.setAttribute('aria-label','Tema: '+{auto:'sistema',light:'claro',dark:'escuro'}[S.tema]+' — alternar');}
+  document.querySelectorAll('[data-tema]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.tema===S.tema));
+}
+let pedidoInstalacao=null;
+function iniciarPWA(){
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault(); pedidoInstalacao=e; document.querySelectorAll('[data-instalar]').forEach(b=>b.hidden=false);});
+  addEventListener('appinstalled',()=>{pedidoInstalacao=null; document.querySelectorAll('[data-instalar]').forEach(b=>b.hidden=true);});
+  const local=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||local)) navigator.serviceWorker.register('sw.js').catch(()=>{});
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone; if(ios) $('#dicaIos').style.display='block';
+  const rede=()=>{const on=navigator.onLine; $('#rede').classList.toggle('off',!on); $('#rede span').textContent=on?'online':'offline';};
+  addEventListener('online',rede); addEventListener('offline',rede); rede();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(S.tema==='auto'){aplicarTema(); render();}});
+}
+
+/* ===== 1. CARGA ===== */
+function vCarga(){
+  const linhas=S.itens.map((it,i)=>`<tr>
+    <td><input data-it="${i}" data-f="tag" value="${esc(it.tag)}" style="min-width:120px"></td>
+    <td style="min-width:230px"><input data-it="${i}" data-f="nome" value="${esc(it.nome)}"></td>
+    <td class="n"><input type="number" min="0" data-it="${i}" data-f="qtd" value="${it.qtd}" style="width:58px"></td>
+    <td class="n"><input type="number" min="1" data-it="${i}" data-f="secoes" value="${it.secoes}" style="width:58px"></td>
+    <td class="n"><input type="number" data-it="${i}" data-f="L" value="${it.L}"></td>
+    <td class="n"><input type="number" data-it="${i}" data-f="W" value="${it.W}"></td>
+    <td class="n"><input type="number" data-it="${i}" data-f="H" value="${it.H}"></td>
+    <td class="n"><input type="number" data-it="${i}" data-f="kg" value="${it.kg}"></td>
+    <td class="n"><input type="number" data-it="${i}" data-f="valor" value="${it.valor}" style="min-width:90px"></td>
+    <td><select data-it="${i}" data-f="emb">${Object.entries(EMB_TIPOS).map(([k,v])=>`<option value="${k}" ${it.emb===k?'selected':''}>${k==='crate'?'Caixa fechada':k==='caixa'?'Caixa compensado':'Engradado'}</option>`).join('')}</select></td>
+    <td class="n"><input type="number" min="1" max="3" data-it="${i}" data-f="pilha" value="${it.pilha}" style="width:52px"></td>
+    <td><input data-it="${i}" data-f="ncm" value="${esc(it.ncm)}" style="min-width:96px"></td>
+    <td><button class="btn" data-del="${i}" aria-label="Remover ${esc(it.tag)}" style="min-height:28px;padding:2px 8px">×</button></td></tr>`).join('');
+  const tv=S.itens.reduce((a,i)=>a+i.qtd*i.valor,0), tk=S.itens.reduce((a,i)=>a+i.qtd*i.secoes*i.kg,0);
+  const trava=congelado()?`<div class="aviso crit"><b>Carga congelada — INV-CMX-010</b>O embarque está em "${ESTADOS[estado()]}". Itens, volumes e estufagem não podem mais mudar; o banco recusa a alteração.</div>`:'';
+  return `<h1>Carga a exportar</h1>${trava}
+  <p class="lead">Escopo do embarque: 2 CCMs, 2 QGBTs, remota, PLC, IHMs, kit de componentes, bancadas e o conjunto de média tensão. Dimensões e peso são por <b>seção de transporte</b> (o painel é dividido nas juntas de barramento para caber na caixa e no contêiner). Edite qualquer valor — o restante do sistema recalcula.</p>
+  <div class="painel rolar"><table class="carga">
+   <thead><tr><th>TAG</th><th>Equipamento</th><th class="n">Qtd</th><th class="n">Seções</th><th class="n">C mm</th><th class="n">L mm</th><th class="n">A mm</th><th class="n">kg/seção</th><th class="n">Valor US$/un</th><th>Embalagem</th><th class="n">Empilh.</th><th>NCM (sugestão)</th><th></th></tr></thead>
+   <tbody>${linhas}</tbody>
+   <tfoot><tr><td colspan="7">Totais</td><td class="n">${nf(tk)} kg</td><td class="n">${usd(tv)}</td><td colspan="4"></td></tr></tfoot>
+  </table></div>
+  <div class="acoes"><button class="btn" id="btnAdd" ${congelado()?'disabled':''}>Adicionar equipamento</button></div>
+  <div class="grid2">
+   <div class="aviso"><b>Premissas de engenharia de embarque</b>CCM e QGBT seguem divididos em seções de 2 colunas; a média tensão viaja em 3 seções de 2 cubículos, com os <b>disjuntores extraíveis em caixa própria</b> — prática que evita dano aos contatos de extração e reduz o peso por seção. Altura inclui base/soleira do painel.</div>
+   <div class="aviso"><b>Premissa de mercado</b>Valores comerciais são exemplo para cálculo de seguro e tributos. Cadastre o valor real da proforma: ele alimenta seguro (110% CIF), base aduaneira no destino e a nota fiscal de exportação.</div>
+  </div>`;
+}
+
+/* ===== 2. EMBALAGEM ===== */
+const pictos={
+ cima:'<svg viewBox="0 0 48 48" aria-label="Este lado para cima"><path d="M14 40V12M8 18l6-7 6 7M34 40V12M28 18l6-7 6 7M6 44h36"/></svg>',
+ seco:'<svg viewBox="0 0 48 48" aria-label="Manter seco"><path d="M6 24a18 12 0 0 1 36 0zM24 24v14a4 4 0 0 1-8 0"/><path d="M12 8l-2 5M22 5l-2 5M34 7l-2 5"/></svg>',
+ fragil:'<svg viewBox="0 0 48 48" aria-label="Frágil"><path d="M14 6h20l-2 16a8 8 0 0 1-16 0zM24 30v12M16 42h16M20 10l4 6-4 4"/></svg>',
+ cg:'<svg viewBox="0 0 48 48" aria-label="Centro de gravidade"><circle cx="24" cy="24" r="14"/><path d="M24 10v28M10 24h28"/><path d="M24 10a14 14 0 0 1 14 14H24zM24 38a14 14 0 0 1-14-14h14z" fill="currentColor" stroke="none" style="fill:var(--woodink)"/></svg>',
+ icar:'<svg viewBox="0 0 48 48" aria-label="Içar aqui"><path d="M10 8a5 5 0 0 1 10 0v4a5 5 0 0 1-10 0zM15 16v6M28 8a5 5 0 0 1 10 0v4a5 5 0 0 1-10 0zM33 16v6M6 28h36v12H6z"/></svg>'
+};
+function vEmb(){
+  const P=S.P; const v=R.vols.find(x=>x.seq===+S.volSel)||R.vols[0];
+  const tot=R.vols.reduce((a,x)=>({t:a.t+x.cx.tara,b:a.b+x.cx.bruto,m:a.m+x.cx.m3,d:a.d+x.cx.nDes,w:a.w+x.cx.volMad,c:a.c+x.cx.custoBRL}),{t:0,b:0,m:0,d:0,w:0,c:0});
+  const rows=R.vols.map(x=>`<tr class="clic ${x.seq===v.seq?'sel':''}" data-vol="${x.seq}">
+    <td class="n">${String(x.seq).padStart(2,'0')}/${R.vols.length}</td><td>${esc(x.tag.split('/')[Math.min(x.eq-1,x.tag.split('/').length-1)].trim())}${x.secoes>1?' · seção '+x.sec+'/'+x.secoes:''}</td>
+    <td>${x.emb==='engradado'?'Engradado':x.emb==='caixa'?'Caixa compensado':'Caixa fechada'}</td>
+    <td class="n">${x.cx.L}×${x.cx.W}×${x.cx.H}</td><td class="n">${nf(x.kg)}</td><td class="n">${nf(x.cx.tara)}</td><td class="n">${nf(x.cx.bruto)}</td>
+    <td class="n">${nf(x.cx.m3,2)}</td><td class="n">${x.cx.nDes||'—'}</td><td class="n">${nf(x.cx.volMad,2)}</td></tr>`).join('');
+  const WDD=P.barreira==='Al'?0.1:1.0; const c=v.cx; const ref=esc(v.tag.split('/')[Math.min(v.eq-1,v.tag.split('/').length-1)].trim());
+  return `<h1>Embalagem marítima e marcação</h1>${congelado()?`<div class="aviso crit"><b>Parâmetros congelados — INV-CMX-012</b>Embalagem concluída: rota e parâmetros não mudam mais.</div>`:''}
+  <p class="lead">Cada seção vira um volume com caixa de madeira tratada termicamente (ISPM-15), barreira de vapor selada e dessecante dimensionado pela DIN 55474. A tara resulta da geometria real da caixa — painéis, estrutura, base com skids, barreira e ferragens.</p>
+  <div class="painel"><h3>Parâmetros de embalagem</h3><div class="form">
+    <label>Folga lateral (mm)<input type="number" data-p="fl" value="${P.fl}"></label>
+    <label>Folga de topo (mm)<input type="number" data-p="ft" value="${P.ft}"></label>
+    <label>Chapa das paredes (mm)<input type="number" data-p="tp" value="${P.tp}"></label>
+    <label>Chapa do teto (mm)<input type="number" data-p="tt" value="${P.tt}"></label>
+    <label>Altura dos skids (mm)<input type="number" data-p="skid" value="${P.skid}"></label>
+    <label>Barreira de vapor<select data-p="barreira"><option value="Al" ${P.barreira==='Al'?'selected':''}>Laminado de alumínio</option><option value="PE" ${P.barreira==='PE'?'selected':''}>Filme PE 200 µm</option></select></label>
+    <label>Umidade do ar no fechamento (g/m³)<input type="number" data-p="umid" value="${P.umid}"></label>
+    <label>Armazenagem no site (dias)<input type="number" data-p="diasArm" value="${P.diasArm}"></label>
+    <label>Margem de porta p/ empilhadeira (mm)<input type="number" data-p="margemPorta" value="${P.margemPorta}"></label>
+  </div></div>
+  <div class="painel rolar"><table>
+   <thead><tr><th class="n">Vol.</th><th>Referência</th><th>Embalagem</th><th class="n">Externo C×L×A mm</th><th class="n">Líquido kg</th><th class="n">Tara kg</th><th class="n">Bruto kg</th><th class="n">m³</th><th class="n">Dessecante (un)</th><th class="n">Madeira m³</th></tr></thead>
+   <tbody>${rows}</tbody>
+   <tfoot><tr><td colspan="4">${R.vols.length} volumes · custo de embalagem ${brl(tot.c)} (${usd(tot.c/S.fx)})</td><td class="n">${nf(R.vols.reduce((a,x)=>a+x.kg,0))}</td><td class="n">${nf(tot.t)}</td><td class="n">${nf(tot.b)}</td><td class="n">${nf(tot.m,1)}</td><td class="n">${nf(tot.d)}</td><td class="n">${nf(tot.w,1)}</td></tr></tfoot>
+  </table></div>
+  <p class="muted peq">Clique numa linha para ver a marcação e a memória de cálculo do volume.</p>
+  <div class="grid2">
+   <div>
+    <h2 style="margin-top:6px">Marcação do volume ${String(v.seq).padStart(2,'0')}</h2>
+    <div class="caixa-face" role="img" aria-label="Marcação de embarque do volume ${v.seq}">
+      <div class="l1">${esc(S.consig)}</div>
+      <div class="l2">${esc(R.rota.porto.toUpperCase())}<br>${esc(S.ref)} · ${ref}</div>
+      <div class="cols">
+        <div>C/No. ${String(v.seq).padStart(2,'0')} / ${R.vols.length}</div><div>MADE IN BRAZIL</div>
+        <div>G.W. ${nf(c.bruto)} KG</div><div>N.W. ${nf(v.kg)} KG</div>
+        <div>${c.L} × ${c.W} × ${c.H} MM</div><div>${nf(c.m3,2)} M³</div>
+      </div>
+      <div class="pict">${pictos.cima}${pictos.seco}${v.emb!=='engradado'?pictos.fragil:''}${pictos.cg}${v.kg>1000?pictos.icar:''}</div>
+      <div class="sscc">(00) ${v.sscc}</div>
+      <div class="ippc">BR-0000<br>HT</div>
+    </div>
+    <p class="muted peq">Marcação conforme DIN EN 55402 / ISO 780. O selo IPPC real é aplicado pela empresa credenciada no MAPA; aqui aparece só o código de tratamento. O SSCC (GS1, prefixo 789) identifica o volume no ledger.</p>
+   </div>
+   <div>
+    <h2 style="margin-top:6px">Memória de cálculo</h2>
+    <div class="painel">
+     <h3>Dessecante — DIN 55474</h3>
+     <div class="formula">n = (1/a) · (V·b + m·c + A·e·WDD·t)</div>
+     ${EMB_TIPOS[v.emb].barreira?`<dl class="kv" style="margin-top:10px">
+      <dt>a (UR final 40%)</dt><dd>${P.a} g/unidade</dd>
+      <dt>V volume interno</dt><dd>${nf(c.Vint,2)} m³</dd>
+      <dt>b umidade do ar</dt><dd>${P.umid} g/m³</dd>
+      <dt>m·c auxiliares higroscópicos</dt><dd>${P.mHigro} kg × ${P.cHigro} g/kg</dd>
+      <dt>A barreira (+15% sobreposição)</dt><dd>${nf(c.aBar,1)} m²</dd>
+      <dt>e · WDD</dt><dd>${P.e} × ${WDD} g/m²·dia</dd>
+      <dt>t trânsito + armazenagem + margem</dt><dd>${c.tDias} dias</dd>
+      <dt>Resultado</dt><dd><b>${c.nDes} unidades</b> (${nf(c.nDes*P.uniDes,1)} kg)</dd></dl>`:'<p class="muted">Engradado aberto: proteção por filme VCI, sem dessecante (sem barreira estanque, o dessecante saturaria).</p>'}
+    </div>
+    <div class="painel"><h3>Tara da caixa</h3><dl class="kv">
+      <dt>Interno</dt><dd>${c.il}×${c.iw}×${c.ih} mm</dd>
+      <dt>Skids / base</dt><dd>${c.nSkid} skids ${v.kg>2000?'reforçados ':''}+ piso ${P.deck} mm</dd>
+      <dt>Madeira total</dt><dd>${nf(c.volMad,3)} m³</dd>
+      <dt>Carga linear na base</dt><dd>${nf(c.cargaLin/1000,2)} t/m ${c.cargaLin>4500?'<span class="tag crit">usar vigas de distribuição</span>':'<span class="tag ok">dentro do limite do piso</span>'}</dd>
+      <dt>Tara / líquido</dt><dd>${nf(c.tara)} kg · ${nf(c.tara/v.kg*100,1)}%</dd></dl></div>
+   </div>
+  </div>
+  <div class="aviso"><b>Boas práticas aplicadas</b>Painel fixado à base por parafusos passantes nos olhais de içamento da soleira, nunca apoiado solto; barreira termosselada com dessecante suspenso fora de contato com o equipamento; indicadores de choque e de inclinação na face frontal; foto do interior afixada do lado de fora antes do fechamento; pontos de içamento e centro de gravidade marcados nas caixas acima de 1 t.</div>`;
+}
+
+/* ===== 3. ESTUFAGEM ===== */
+const corItem=id=>['MT','DJ'].includes(id)?'var(--cargo-b)':['KIT','BAN','IHM'].includes(id)?'var(--cargo-c)':'var(--cargo-a)';
+const txtItem=id=>['MT','DJ'].includes(id)?'var(--surface)':'var(--ink)';
+function planoTopo(b){
+  const C=CONT[b.T]; const k=1000/C.L; const pad=20; const W=1000+pad*2, H=C.W*k+pad*2+24;
+  const r=b.itens.map(it=>{const x=pad+it.x*k, y=pad+(it.y+ (b.T==='40FR'?0:S.P.folgaLat/2))*k, w=it.l*k, h=it.w*k; const lab=it.u.vols.length>1?it.u.id+' ×'+it.u.vols.length:it.u.id;
+    const nums=it.u.vols.map(v=>v.seq).join('+');
+    return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${corItem(it.u.id)}" stroke="var(--ink)" stroke-width="1"/>
+    ${w>34?`<text x="${x+w/2}" y="${y+h/2-2}" text-anchor="middle" font-size="${Math.min(15,w/4)}" font-weight="600" style="fill:${txtItem(it.u.id)}">${lab}</text><text x="${x+w/2}" y="${y+h/2+12}" text-anchor="middle" font-size="11" style="fill:${txtItem(it.u.id)}">v${nums}</text>`:''}</g>`;}).join('');
+  const cgx=pad+(C.L/2+b.cogX/100*C.L)*k, cgy=pad+(C.W/2+b.cogY/100*b.W)*k;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Planta de estufagem vista de cima">
+   <rect x="${pad}" y="${pad}" width="${C.L*k}" height="${C.W*k}" fill="var(--surface2)" stroke="var(--ink2)" stroke-width="2" ${C.top?'stroke-dasharray="8 4"':''}/>
+   <line x1="${pad+C.L*k}" y1="${pad}" x2="${pad+C.L*k}" y2="${pad+C.W*k}" stroke="var(--brand)" stroke-width="5"/>
+   <text x="${pad+C.L*k-6}" y="${pad+C.W*k+18}" text-anchor="end" font-size="13" style="fill:var(--muted)">portas</text>
+   <text x="${pad+4}" y="${pad+C.W*k+18}" font-size="13" style="fill:var(--muted)">parede frontal</text>
+   ${r}
+   <line x1="${pad+C.L*k/2}" y1="${pad-8}" x2="${pad+C.L*k/2}" y2="${pad+C.W*k+8}" stroke="var(--muted)" stroke-dasharray="3 3"/>
+   <circle cx="${cgx}" cy="${cgy}" r="7" fill="var(--brand)" stroke="var(--surface)" stroke-width="2"/><text x="${cgx+10}" y="${cgy-8}" font-size="12" font-weight="700" style="fill:var(--brand)">CG</text>
+  </svg>`;
+}
+function planoLateral(b){
+  const C=CONT[b.T]; const k=1000/C.L; const pad=20; const hMax=Math.max(C.H,b.maxH,C.doorH)+300; const W=1000+pad*2, H=hMax*k+pad*2;
+  const y0=pad+hMax*k; const ord=[...b.itens].sort((a,c)=>a.y-c.y);
+  const r=ord.map(it=>{let y=y0; return it.u.vols.map(v=>{const h=v.cx.H*k; y-=h; return `<rect x="${pad+it.x*k}" y="${y}" width="${it.l*k}" height="${h}" fill="${corItem(it.u.id)}" fill-opacity=".8" stroke="var(--ink)"/>`;}).join('');}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vista lateral com alturas">
+   <rect x="${pad}" y="${y0-C.H*k}" width="${C.L*k}" height="${C.H*k}" fill="none" stroke="var(--ink2)" stroke-width="2" ${C.top?'stroke-dasharray="8 4"':''}/>
+   ${!C.top?`<line x1="${pad+C.L*k-2}" y1="${y0-C.doorH*k}" x2="${pad+C.L*k+14}" y2="${y0-C.doorH*k}" stroke="var(--brand)" stroke-width="3"/><text x="${pad+C.L*k-6}" y="${y0-C.doorH*k-5}" text-anchor="end" font-size="12" style="fill:var(--brand)">vão da porta ${C.doorH} mm</text>`:''}
+   ${r}
+   ${b.oh>0?`<line x1="${pad}" y1="${y0-b.maxH*k}" x2="${pad+C.L*k}" y2="${y0-b.maxH*k}" stroke="var(--crit)" stroke-dasharray="6 3" stroke-width="2"/><text x="${pad+6}" y="${y0-b.maxH*k-6}" font-size="13" font-weight="700" style="fill:var(--crit)">sobre-altura ${b.oh} mm (OOG — lona elevada)</text>`:''}
+   <text x="${pad+6}" y="${y0-C.H*k+16}" font-size="12" style="fill:var(--muted)">altura interna ${C.H} mm</text>
+  </svg>`;
+}
+function vEstuf(){
+  const P=S.P;
+  const just=[]; const vistos=new Set();
+  for(const b of R.est.bins) for(const it of b.itens){ if(vistos.has(it.u.id)) continue; vistos.add(it.u.id);
+    if(it.u.cls==='40OT') just.push(`<li><b>${it.u.id}</b> (${it.u.H} mm de altura embalada) passa do vão da porta do 40' HC (${CONT['40HC'].doorH} − ${P.margemPorta} mm de margem para empilhadeira): exige <b>Open Top</b> com carregamento por guindaste${it.u.H>CONT['40OT'].H?' e sobre-altura de '+(it.u.H-CONT['40OT'].H)+' mm':''}.</li>`);
+    if(it.u.cls==='40FR') just.push(`<li><b>${it.u.id}</b> excede largura/altura de contêiner fechado: <b>Flat Rack</b> com carga fora de gabarito.</li>`);
+  }
+  const cards=R.est.bins.map((b,i)=>{const C=CONT[b.T];
+    const lista=b.vols.map(v=>'v'+String(v.seq).padStart(2,'0')).join(', ');
+    return `<article class="cont-card">
+     <div class="cont-hd"><h3>${i+1}. ${C.nome}</h3><span class="id">${b.num}</span><span class="muted">lacre ${b.lacre}</span>
+      ${b.oh>0?'<span class="tag crit">fora de gabarito · sobre-altura '+b.oh+' mm</span>':''}${b.oogW?'<span class="tag crit">largura fora de gabarito</span>':''}${b.desloc>0?'<span class="tag at">carga centralizada · escorar '+nf(b.desloc)+' mm na parede frontal</span>':''}</div>
+     <div class="cont-bd">
+      <div class="grid3" style="margin-bottom:12px">
+       <div><small class="muted">Peso da carga</small><div class="num"><b>${nf(b.kg)} kg</b> de ${nf(C.payload)}</div><div class="barra"><i class="${b.pesoUso>90?'hi':''}" style="width:${Math.min(100,b.pesoUso)}%"></i></div></div>
+       <div><small class="muted">Ocupação do piso</small><div class="num"><b>${nf(b.areaUso)}%</b> · ${nf(b.m3,1)} m³</div><div class="barra"><i style="width:${Math.min(100,b.areaUso)}%"></i></div></div>
+       <div><small class="muted">VGM (SOLAS, método 2)</small><div class="num"><b>${nf(b.vgm)} kg</b></div><small class="muted">carga ${nf(b.kg)} + tara ${nf(C.tara)}</small></div>
+       <div><small class="muted">Centro de gravidade</small><div class="num"><b>${b.cogX>=0?'+':''}${nf(b.cogX,1)}%</b> long. · ${b.cogY>=0?'+':''}${nf(b.cogY,1)}% transv.</div>${Math.abs(b.cogX)>10||Math.abs(b.cogY)>10?'<span class="tag crit">redistribuir</span>':'<span class="tag ok">equilibrado</span>'}</div>
+      </div>
+      <div class="plano rolar">${planoTopo(b)}</div>
+      <div class="plano rolar" style="margin-top:8px">${planoLateral(b)}</div>
+      <p class="peq muted" style="margin:8px 0 0">Volumes: ${lista}</p>
+     </div></article>`;}).join('');
+  return `<h1>Estufagem e seleção de contêiner</h1>
+  <p class="lead">O motor testa cada volume contra o vão de porta, altura e largura de cada equipamento, escolhe o menor que resolve, arranja o piso por MaxRects (volumes giram 90°, painéis sempre em pé), empilha só o que é empilhável, rebaixa 40' HC para 20' ou 40' Dry quando cabe e centraliza o CG.</p>
+  ${R.est.sem.length?`<div class="aviso crit"><b>${R.est.sem.length} unidade(s) sem encaixe</b>Nenhum equipamento de contêiner comporta estas dimensões — avaliar breakbulk ou redivisão das seções.</div>`:''}
+  ${just.length?`<div class="aviso"><b>Por que estes equipamentos</b><ul style="margin:4px 0 0 18px;padding:0">${just.join('')}<li>Os demais volumes passam pelo vão do 40' HC com a margem de empilhadeira; o que sobra de piso no Open Top é aproveitado antes de abrir outro contêiner.</li></ul></div>`:''}
+  <p class="peq muted">Legenda: cinza claro = painéis BT/automação · grafite = média tensão · âmbar = kits, bancadas e IHMs. Linha laranja = portas.</p>
+  ${cards}
+  <div class="aviso"><b>Peação e amarração (CTU Code IMO/OIT/UNECE)</b>Travamento por escoras de madeira contra a parede frontal e bloqueio lateral; cintas de poliéster com catraca nos olhais do contêiner (mín. 2 por volume acima de 1 t); calços em todos os skids; nenhum vazio longitudinal acima de 150 mm sem preenchimento. No Open Top, a lona elevada precisa de armação e a sobre-altura entra no booking como OOG.</div>`;
+}
+
+/* ===== 4. COTAÇÃO ===== */
+const BUCKETS=[['emb','Embalagem ISPM-15 (caixas, barreira, dessecante)'],['carg','Estufagem, peação e lacre na fábrica'],['rodo','Rodoviário Blumenau → Portonave (≈55 km)'],['despE','Despachante, DU-E e certificado de origem'],['thcO','THC / capatazia no terminal de origem'],['frete','Frete marítimo + BAF/EFS + ISPS + OOG + B/L'],['seg','Seguro de transporte (110% CIF)'],['thcD','THC no porto de destino'],['entrega','Rodoviário porto → site do cliente'],['despI','Despachante de importação no destino'],['trib','Tributos de importação no destino']];
+function vCot(){
+  const c=R.cot, inc=INCOTERMS[S.inc], rota=R.rota;
+  const linhas=c.linhas.map((l,i)=>`<tr><td>${i+1}. ${CONT[l.T].nome}<br><span class="muted peq">${R.est.bins[i].num}</span></td><td class="n">${usd(l.frete)}</td><td class="n">${usd(l.baf)}</td><td class="n">${l.oh||l.oog?usd(l.oh+l.oog):'—'}</td><td class="n">${usd(l.isps)}</td><td class="n"><b>${usd(l.maritimo)}</b></td><td class="n">${usd(l.thcO)}</td><td class="n">${usd(l.rodo)}</td><td class="n">${usd(l.thcD)}</td></tr>`).join('');
+  const bk=BUCKETS.map(([k,t])=>{const v=c.tot[k]||0; const vend=inc.v.includes(k); return `<tr><td>${t}</td><td class="n">${usd(v)}</td><td>${vend?'<span class="tag" style="border-color:var(--brand);color:var(--brand2)">Vendedor</span>':'<span class="tag">Comprador</span>'}</td></tr>`;}).join('');
+  const comp=ROTAS.map(r=>{const q=cotar(R.est.bins,R.vols,r,S.inc,+S.fx,+S.seg); const tl=Object.entries(q.tot).filter(([k])=>k!=='trib').reduce((a,[,v])=>a+v,0); return `<tr ${r.id===S.rota?'class="sel"':''}><td>${r.nome}</td><td class="n">${r.tt+(r.transb?4:0)} d${r.transb?' · transbordo':''}</td><td class="n">${usd(q.tot.frete)}</td><td class="n">${usd(tl)}</td><td class="n">${nf(tl/q.fob*100,1)}%</td><td class="n">${r.trib?nf(r.trib,1)+'%':'0%'}</td><td class="peq">${r.acordo}</td></tr>`;}).join('');
+  const avisos=[];
+  if(inc.aviso) avisos.push(`<div class="aviso"><b>${S.inc} com contêiner</b>O risco passa a bordo do navio, mas o vendedor perde o controle da carga no gate-in do terminal, dias antes. A ICC recomenda FCA, CPT ou CIP para carga conteinerizada.</div>`);
+  if(S.inc==='DDP'&&rota.trib>20) avisos.push(`<div class="aviso crit"><b>DDP para ${rota.nome}: vendedor assume ${usd(c.tot.trib)} em tributos</b>Desde julho de 2026 produtos brasileiros pagam sobretaxa Section 301 de 25% somada a 12,5% (trabalho forçado), além da MFN. Recomendação: DAP, com o importador de registro no destino. A base aduaneira americana é o valor da transação (FOB), sem frete internacional.</div>`);
+  if(rota.id.startsWith('US')&&S.inc!=='DDP') avisos.push(`<div class="aviso"><b>Atenção comercial: sobretaxa nos EUA</b>O importador pagará cerca de ${usd(c.tot.trib)} (${nf(rota.trib,1)}% sobre ${usd(c.baseAd)}). Isso pesa na negociação — confirme a classificação HTS e eventuais exclusões antes de fechar preço.</div>`);
+  if(S.inc==='CIF'||S.inc==='CIP') avisos.push(`<div class="aviso ok"><b>Cobertura de seguro</b>${S.inc==='CIP'?'CIP exige ICC (A) — cobertura ampla, adequada a equipamento elétrico.':'CIF exige só ICC (C). Para painéis, contrate ICC (A) mesmo assim: avaria por água e manuseio não é coberta na cláusula C.'}</div>`);
+  return `<h1>Cotação de frete e divisão de custos</h1>
+  <p class="lead">Rota: Portonave (Navegantes/SC) → ${rota.porto}. Frete base indicativo de set/2026 por equipamento, com sobretaxas separadas. Câmbio ${nf(S.fx,2)} e seguro ${nf(S.seg,2)}% são editáveis.</p>
+  <div class="grid2">
+   <div class="painel"><h3>Mercado</h3><p class="peq" style="margin:0">O índice global de contêineres da Drewry fechou em US$ 4.468/40' em 24/09/2026, estável na faixa de US$ 4.460–4.500 em setembro. Armadores seguem com sobretaxas emergenciais de combustível desde agosto por causa das tensões no Estreito de Ormuz — por isso o BAF/EFS aparece separado e deve ser revalidado a cada cotação.</p></div>
+   <div class="painel"><div class="form"><label>Taxa de seguro (% a.v.)<input type="number" step="0.05" id="inSeg" value="${S.seg}"></label><label>Referência do embarque<input id="inRef" value="${esc(S.ref)}"></label><label>Consignatário<input id="inCons" value="${esc(S.consig)}"></label></div></div>
+  </div>
+  ${painelAprovacao()}
+  <h2>Frete por contêiner</h2>
+  <div class="painel rolar"><table><thead><tr><th>Equipamento</th><th class="n">Frete base</th><th class="n">BAF/EFS</th><th class="n">OOG</th><th class="n">ISPS</th><th class="n">Marítimo</th><th class="n">THC origem</th><th class="n">Rodoviário</th><th class="n">THC destino</th></tr></thead><tbody>${linhas}</tbody>
+  <tfoot><tr><td colspan="5">Taxa de emissão do B/L: ${usd(CUSTOS.bl)}</td><td class="n">${usd(c.tot.frete)}</td><td class="n">${usd(c.tot.thcO)}</td><td class="n">${usd(c.tot.rodo)}</td><td class="n">${usd(c.tot.thcD)}</td></tr></tfoot></table></div>
+  <h2>Quem paga o quê em ${S.inc}</h2>
+  <p class="muted" style="margin-top:-4px">Transferência de risco: ${inc.risco}.</p>
+  ${avisos.join('')}
+  <div class="painel rolar"><table><thead><tr><th>Componente</th><th class="n">Valor</th><th>Responsável</th></tr></thead><tbody>${bk}</tbody>
+   <tfoot><tr><td>Vendedor (exportador)</td><td class="n">${usd(R.vend)}</td><td>${nf(R.vend/c.fob*100,1)}% do FOB</td></tr><tr><td>Comprador</td><td class="n">${usd(R.comp)}</td><td>inclui tributos no destino</td></tr></tfoot></table></div>
+  <h2>Mesma carga, outros destinos</h2>
+  <div class="painel rolar"><table><thead><tr><th>Destino</th><th class="n">Trânsito</th><th class="n">Marítimo</th><th class="n">Logística total</th><th class="n">% FOB</th><th class="n">Tributo destino</th><th>Acordo / regime</th></tr></thead><tbody>${comp}</tbody></table></div>
+  <p class="muted peq">Logística total = embalagem até entrega no site, sem tributos. Alíquotas no destino são estimativas por posição 8537 — validar por código e com certificado de origem quando houver acordo.</p>`;
+}
+
+function painelAprovacao(){
+  const ap=S.cotAprovada; const cs=S.srv?S.srv.cotacoes:[]; const a=cs.find(c=>c.status==='APROVADA'); const r=cs.find(c=>c.status==='RASCUNHO');
+  const info=a?`aprovada por <b>${esc(a.aprovado_por)}</b> em ${new Date(a.aprovado_em).toLocaleDateString('pt-BR')} · versão ${a.versao} · vendedor ${usd(a.vendedor_usd)}`:ap?'aprovada (demonstração)':'';
+  const difere=a&&r&&Math.abs(a.vendedor_usd-r.vendedor_usd)>0.5;
+  return `<div class="painel"><h3>Aprovação comercial</h3>
+   ${ap?`<div class="aviso ok"><b>Cotação aprovada</b>${info}</div>`:'<div class="aviso"><b>Cotação em rascunho</b>A estufagem só pode ser registrada depois da aprovação humana (INV-CMX-013 e 022). A aprovação também realiza os marcos de cotação e booking.</div>'}
+   ${difere?`<div class="aviso"><b>Rascunho diverge da cotação aprovada</b>Recalculado: vendedor ${usd(r.vendedor_usd)}. Aprove novamente para substituir a versão vigente.</div>`:''}
+   ${!ap||difere?(!pode('comex-comercial')?'<p class="peq muted">A aprovação exige o papel Comercial.</p>'
+     :AUTH.on&&MODO==='servidor'?`<div class="acoes"><button class="btn pri" id="btnAprovar">Aprovar como ${esc(AUTH.user.nome||AUTH.user.login)}</button></div><p class="peq muted">O banco grava o aprovador a partir da sua sessão autenticada (INV-CMX-024).</p>`
+     :`<div class="form" style="align-items:end"><label>Aprovado por<input id="inAprov" value="${esc(S.usuario||'')}" placeholder="nome ou e-mail"></label><div><button class="btn pri" id="btnAprovar">Aprovar cotação</button></div></div>`):''}
+  </div>`;
+}
+
+/* ===== 5. CRONOGRAMA ===== */
+function vCron(){
+  const c=R.cron;
+  const tab=c.M.map(m=>`<tr ${m.venc?'class="sel"':''}><td class="n">${fD(m.d)}/${String(m.d.getFullYear()).slice(2)}</td><td>${m.t}</td><td class="n">${m.dias>=0?'D+'+m.dias:'D'+m.dias}</td><td>${m.real?'<span class="tag ok">realizado '+fD(m.real)+'</span>':m.venc?'<span class="tag crit">vencido</span>':m.crit?'<span class="tag at">marco crítico</span>':''}</td></tr>`).join('');
+  const ini=new Date(Math.min(HOJE,c.M[0].d)); const fim=new Date(Math.max(c.ent,c.alvo));
+  const meses=[]; let d=new Date(ini.getFullYear(),ini.getMonth(),1);
+  while(d<=fim){meses.push(new Date(d)); d=new Date(d.getFullYear(),d.getMonth()+1,1);}
+  const porDia={}; c.M.forEach(m=>{(porDia[iso(m.d)]=porDia[iso(m.d)]||[]).push(m);});
+  const alvoIso=iso(c.alvo);
+  const curto={cot:'Cotar frete',book:'Booking',cx:'Pedido caixas',fat:'FAT',emb:'Embalagem',insp:'Inspeção',estuf:'Estufar + DU-E',draft:'Draft SI',cut:'Cut-off/VGM',etd:'ETD',bl:'eBL',tb:'Transbordo',eta:'ETA',lib:'Desembaraço',ent:'Entrega'};
+  const cal=meses.map(m=>{const dias=[]; const off=m.getDay(); for(let i=0;i<off;i++) dias.push('<div class="dia vazio"></div>');
+    const n=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+    for(let i=1;i<=n;i++){const x=new Date(m.getFullYear(),m.getMonth(),i); const k=iso(x); const ms=porDia[k]||[];
+      const cl=['dia',(x.getDay()===0||x.getDay()===6)?'fds':'',FERIADOS.has(k)?'fer':'',k===iso(HOJE)?'hoje':''].join(' ');
+      dias.push(`<div class="${cl}" title="${ms.map(q=>esc(q.t)).join(' | ')}"><span class="d">${i}</span>${ms.map(q=>`<span class="mk ${q.venc?'venc':q.real?'':q.f==='mar'?'mar':q.crit?'crit':''}" ${q.real?'style="opacity:.55;text-decoration:line-through"':''}>${curto[q.k]}</span>`).join('')}${k===alvoIso&&!ms.some(q=>q.k==='ent')?'<span class="mk crit">Data alvo</span>':''}</div>`);}
+    return `<div class="mes"><h4>${m.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</h4><div class="dias">${dsem.map(x=>`<div class="dw">${x}</div>`).join('')}${dias.join('')}</div></div>`;}).join('');
+  const st=estado()==='ENTREGUE'?`<div class="aviso ok"><b>Embarque entregue</b>Todos os marcos realizados; o ledger registra o aceite no site do cliente.</div>`:!c.viavel?`<div class="aviso crit"><b>Programação inviável a partir de hoje</b>Há marcos anteriores à data atual. Postergue a data de entrega, reduza o prazo de embalagem ou avalie embarque aéreo parcial (IHMs, kit e PLC cabem em carga aérea).</div>`
+    :c.folga<10?`<div class="aviso"><b>Janela apertada: ${c.folga} dias para contratar o frete</b>${c.esp?'Open Top e Flat Rack têm oferta limitada em Navegantes; ':''}solicite cotação a pelo menos dois NVOCCs ainda esta semana.</div>`
+    :`<div class="aviso ok"><b>Programação viável</b>${S.cotAprovada?`Frete contratado. Próximo marco (${esc((c.prox||{}).t||'')}) em ${c.folga} dia(s).`:`Folga de ${c.folga} dias até a contratação do frete.`} Entrega prevista em ${fD(c.ent)}, ${Math.round((c.alvo-c.ent)/DIA)} dia(s) antes da data programada.</div>`;
+  return `<h1>Cronograma reverso até a entrega</h1>
+  <p class="lead">A partir da data programada no site, o sistema recua pelo trânsito marítimo, escolhe o navio semanal compatível e recua pelos prazos de terminal, documentos, estufagem, embalagem e FAT — em dias úteis, com feriados nacionais.</p>
+  <div class="painel"><div class="form">
+    <label>Data programada de entrega<input type="date" id="inEnt" value="${S.entrega}"></label>
+    <label>Saída semanal do serviço<select id="inDia">${[1,2,3,4,5,6].map(i=>`<option value="${i}" ${+S.diaSaida===i?'selected':''}>${['','segunda','terça','quarta','quinta','sexta','sábado'][i]}</option>`).join('')}</select></label>
+    <label>Hoje<input value="${HOJE.toLocaleDateString('pt-BR')}" disabled></label>
+    <label>Trânsito marítimo<input value="${R.rota.tt} dias${R.rota.transb?' + 4 transbordo':''}" disabled></label>
+  </div></div>
+  ${st}
+  <div class="painel rolar"><table><thead><tr><th class="n">Data</th><th>Marco</th><th class="n">A partir de hoje</th><th></th></tr></thead><tbody>${tab}</tbody></table></div>
+  <h2>Agenda</h2>
+  <p class="peq muted" style="margin-top:-4px">Laranja = marco crítico · grafite = etapa marítima · vermelho = vencido · contorno = hoje. Toque num dia para ver o detalhe.</p>
+  <div class="cal">${cal}</div>`;
+}
+
+/* ===== 6. BLOCKCHAIN ===== */
+function dadosEtapa(cod){
+  const pl=R.vols.map(v=>({sscc:v.sscc,gw:Math.round(v.cx.bruto*10)/10,nw:v.kg,dim:v.cx.L+'x'+v.cx.W+'x'+v.cx.H}));
+  return {PEDIDO:{ref:S.ref,consignatario:S.consig,incoterm:S.inc+' '+R.rota.nome,fob_usd:R.cot.fob},
+    PASSAPORTES:{volumes:R.vols.length,sscc:R.vols.map(v=>v.sscc)}, FAT:{relatorio:'FAT-'+S.ref,resultado:'aprovado'},
+    EMBALAGEM:{volumes:R.vols.length,bruto_kg:Math.round(R.vols.reduce((a,v)=>a+v.cx.bruto,0)*10)/10,packing_list:pl.length+' linhas'},
+    ESTUFAGEM:{conteineres:R.est.bins.map(b=>({conteiner:b.num,lacre:b.lacre,tipo:b.T,vgm_kg:Math.round(b.vgm),volumes:b.vols.length,merkle:b.vols.map(v=>v.sscc)}))},
+    DUE:{due:'26BR'+String(S.pid).padStart(4,'0')+String(R.vols.length).padStart(4,'0'),nfe_cfop:'7101'},
+    GATE_IN:{conteineres:R.est.bins.map(b=>b.num),vgm_kg:R.est.bins.map(b=>Math.round(b.vgm))}, EMBARQUE:{porto:'Portonave — Navegantes/SC'},
+    EBL:{bl:'GPSBL'+String(S.pid).padStart(4,'0'),tipo:'eBL negociável',padrao:'DCSA'}, CHEGADA:{porto:R.rota.porto},
+    DESEMBARACO:{liberado:true}, ENTREGA:{volumes_recebidos:R.vols.length,avarias:0}}[cod]||{};
+}
+function eventosPlano(){
+  const c=R.cron; const g=k=>(c.M.find(m=>m.k===k)||{}).d||HOJE;
+  const ini=S.pid===1||addD(g('cot'),-14)>HOJE?HOJE:addD(g('cot'),-14);
+  const quando={PEDIDO:ini,PASSAPORTES:ini,FAT:g('fat'),EMBALAGEM:g('insp'),ESTUFAGEM:g('estuf'),DUE:g('estuf'),GATE_IN:g('cut'),EMBARQUE:g('etd'),EBL:g('bl'),CHEGADA:g('eta'),DESEMBARACO:g('lib'),ENTREGA:g('ent')};
+  const local={CHEGADA:R.rota.porto,DESEMBARACO:R.rota.porto,ENTREGA:'Site do cliente — '+R.rota.nome,DUE:'Portal Único Siscomex',GATE_IN:'Portonave — Navegantes/SC',EMBARQUE:'Portonave — Navegantes/SC',EBL:'Plataforma eBL',FAT:'Bancada de testes — fábrica',EMBALAGEM:'Expedição — fábrica',ESTUFAGEM:'Expedição — fábrica'};
+  return ETAPAS.map(([cod,ev,tipo,biz])=>({cod,d:quando[cod]>HOJE?HOJE:quando[cod],ev,tipo,biz,local:local[cod]||'Fábrica do exportador — Blumenau/SC',dados:dadosEtapa(cod)}));
+}
+async function construirLedger(){
+  const alvo=$('#cadeia'); if(!alvo) return;
+  let blocos=[], ok=[], pend=[];
+  if(S.srv){
+    blocos=S.srv.ledger.map(b=>({i:b.seq,ts:b.ts,evento:(ETAPAS.find(e=>e[0]===b.etapa)||[,b.etapa])[1],tipo:b.tipo_epcis,bizStep:b.biz_step,local:b.local,dados:b.dados,prev:b.prev_hash,hash:b.hash,por:b.registrado_por}));
+    ok=S.srv.verificacao.map(v=>v.hash_ok&&v.elo_ok);
+    pend=ETAPAS.slice(blocos.length).map(e=>({ev:e[1],tipo:e[2],local:'',d:null}));
+  } else {
+    const evs=eventosPlano(); const K=Math.min(S.ledgerK,evs.length-1); let prev='0'.repeat(64);
+    for(let i=0;i<=K;i++){const e=evs[i]; const dados={...e.dados}; if(dados.conteineres&&e.cod==='ESTUFAGEM') for(const c of dados.conteineres){c.merkle_root=await merkle(c.merkle); delete c.merkle;}
+      const cab={i:i+1,ts:iso(e.d)+'T'+String(9+i%8).padStart(2,'0')+':00:00-03:00',evento:e.ev,tipo:e.tipo,bizStep:e.biz,local:e.local,dados,prev};
+      const hash=await sha256(JSON.stringify(cab)); blocos.push({...cab,hash}); prev=hash;}
+    if(S.tamper>=0&&S.tamper<blocos.length){const b=blocos[S.tamper]; b.dados=JSON.parse(JSON.stringify(b.dados)); b.dados._adulterado='peso bruto alterado +380 kg';}
+    let p='0'.repeat(64), q=false;
+    for(const b of blocos){const {hash,...cab}=b; const h=await sha256(JSON.stringify(cab)); const v=!q&&h===hash&&cab.prev===p; if(!v) q=true; ok.push(v); p=hash;}
+    pend=evs.slice(K+1);
+  }
+  alvo.innerHTML=blocos.map((b,i)=>`<div class="bloco ${ok[i]?'':'invalido'}"><div class="ix">#${b.i}</div><div class="corpo">
+     <div class="t"><b>${esc(b.evento)}</b><span class="tag ${ok[i]?'ok':'crit'}">${ok[i]?'íntegro':'hash não confere'}</span></div>
+     <div class="peq muted">${String(b.ts).slice(0,10).split('-').reverse().join('/')} · ${b.tipo} · bizStep <i>${b.bizStep}</i> · ${esc(b.local)}${b.por?' · '+esc(b.por):''}</div>
+     <details style="margin-top:4px"><summary class="peq">dados do evento</summary><pre class="hash" style="white-space:pre-wrap">${esc(JSON.stringify(b.dados,null,1)).slice(0,1600)}</pre></details>
+     <div class="hash">prev ${String(b.prev).slice(0,24)}…<br>hash <b>${b.hash}</b></div></div></div>`).join('')+
+   pend.map((e,j)=>`<div class="bloco pend"><div class="ix">#${blocos.length+1+j}</div><div class="corpo"><div class="t"><b>${esc(e.ev)}</b>${e.d?`<span class="tag">previsto ${fD(e.d)}</span>`:''}</div><div class="peq muted">${e.tipo}${e.local?' · '+esc(e.local):''}</div></div></div>`).join('');
+  const st=$('#bcStatus'); const tudo=ok.every(Boolean);
+  if(st) st.innerHTML=tudo?`<div class="aviso ok"><b>Cadeia íntegra — ${blocos.length} blocos verificados${S.srv?' pelo PostgreSQL':''}</b>${S.srv?'Verificação por fn_ledger_verificar(): hash SHA-256 recalculado no banco e elo com o bloco anterior.':'Cada hash SHA-256 recalculado confere, e cada bloco aponta para o hash do anterior.'}</div>`
+    :`<div class="aviso crit"><b>Adulteração detectada no bloco #${ok.indexOf(false)+1}</b>O conteúdo não gera mais o hash registrado, e todos os blocos seguintes perdem a ligação.</div>`;
+}
+function vBC(){
+  const prox=ETAPAS[S.ledgerK+1]; const bloqueio=prox&&prox[0]==='ESTUFAGEM'&&!S.cotAprovada;
+  const pass=R.vols.slice(0,40).map(v=>{const b=R.est.bins.find(x=>x.vols.includes(v)); return `<tr><td class="hash">${v.sscc}</td><td>${esc(v.tag)}${v.secoes>1?' · s'+v.sec:''}</td><td class="n">${nf(v.cx.bruto)}</td><td>${b?b.num:'—'}</td></tr>`;}).join('');
+  return `<h1>Rastreabilidade em blockchain</h1>
+  <p class="lead">Cada volume recebe um passaporte digital (SSCC GS1) e cada etapa vira um evento GS1 EPCIS 2.0, encadeado por SHA-256. A estufagem agrega os volumes ao contêiner por raiz de Merkle. ${S.srv?'Neste modo o ledger mora no PostgreSQL: o hash é calculado por trigger e a tabela recusa UPDATE, DELETE e TRUNCATE.':'Modo demonstração: ledger simulado no navegador com as mesmas regras do banco.'}</p>
+  <div class="painel"><dl class="kv"><dt>Estado do embarque</dt><dd>${ESTADOS[estado()]}</dd><dt>Próxima etapa</dt><dd>${prox?prox[1]:'fluxo concluído'}</dd>${S.srv&&AUTH.on?`<dt>Registrar como</dt><dd>${esc(AUTH.user.nome||AUTH.user.login)}</dd>`:''}${S.srv&&!AUTH.on?`<dt>Registrar como</dt><dd><input id="inUsuario" value="${esc(S.usuario||'')}" placeholder="nome ou e-mail" style="border:1px solid var(--line2);border-radius:var(--r1);padding:5px 8px;background:var(--surface);min-height:34px;width:min(280px,100%)"></dd>`:''}</dl>
+   ${bloqueio?'<div class="aviso crit"><b>INV-CMX-022: estufagem exige cotação aprovada</b>Aprove a cotação na tela Embarcar → Cotação antes de registrar a estufagem.</div>':''}
+   ${!pode('comex-logistica')?'<p class="peq muted">Registrar eventos exige o papel Logística.</p>':''}
+   <div class="acoes"><button class="btn pri" id="bcNext" ${!prox||bloqueio||!pode('comex-logistica')?'disabled':''}>Registrar próximo evento</button>
+   ${S.srv?'<button class="btn" id="bcVerif">Verificar no banco</button>':'<button class="btn" id="bcTamper">Simular adulteração</button><button class="btn" id="bcReset">Reiniciar ledger</button>'}</div></div>
+  <div id="bcStatus"></div>
+  <div class="grid2">
+   <div><h2 style="margin-top:6px">Ledger do embarque ${esc(S.ref)}</h2><div class="cadeia" id="cadeia"><p class="muted">Calculando hashes…</p></div></div>
+   <div>
+    <h2 style="margin-top:6px">Arquitetura</h2>
+    <div class="painel peq">
+     <p style="margin-top:0"><b>Rede permissionada, não pública.</b> Fabricante, despachante, armador/NVOCC, seguradora, banco e cliente como nós, sem token e sem custo por transação.</p>
+     <p><b>Padrões abertos.</b> GS1 EPCIS 2.0 para eventos e padrão DCSA para o eBL — a lição da TradeLens, encerrada em 2023 sem escala.</p>
+     <p style="margin-bottom:0"><b>Invariantes no banco.</b> Sequência de etapas estrita (INV-CMX-011), tempo monotônico e sem futuro (021), estufagem só com cotação aprovada (022), append-only (008).</p>
+    </div>
+    <h2>Passaportes digitais</h2>
+    <div class="painel rolar"><table><thead><tr><th>SSCC</th><th>Volume</th><th class="n">Bruto kg</th><th>Contêiner</th></tr></thead><tbody>${pass}</tbody></table></div>
+    <p class="peq muted">SSCC com dígito GS1 válido e contêineres com dígito ISO 6346 válido — ambos verificados por CHECK no banco. Prefixos são fictícios.</p>
+   </div>
+  </div>`;
+}
+
+/* ===== 7. DOCUMENTOS ===== */
+const DOC_DEF=[
+ ['INVOICE','Fatura comercial (Commercial Invoice)',null,()=>'Sempre'],
+ ['PACKING','Packing list por volume (SSCC, dimensões, pesos)',null,()=>'Sempre — gerado abaixo'],
+ ['NFE_DUE','NF-e de exportação (CFOP 7101) e DU-E','despE',V=>V('despE')?'Sempre em FCA ou superior':'Em EXW o comprador exporta — evitar'],
+ ['CO','Certificado de origem',null,(V,r)=>r.co?'Necessário para 0% no destino ('+r.acordo.split(':')[0]+')':'Não exigido nesta rota'],
+ ['ISPM15','Declaração de tratamento ISPM-15 / carimbo IPPC','emb',()=>'Toda madeira bruta'],
+ ['BOOKING','Booking confirmation e instrução de embarque','frete',()=>'Antes do deadline draft'],
+ ['VGM','VGM — peso bruto verificado (SOLAS VI/2)','thcO',()=>'Antes do cut-off'],
+ ['EBL','Conhecimento de embarque eletrônico (eBL DCSA)','frete',()=>'Após o embarque'],
+ ['SEGURO','Apólice/certificado de seguro','seg',()=>S.inc==='CIP'?'Obrigatório ICC (A)':S.inc==='CIF'?'Obrigatório ICC (C) mínimo':'Recomendado'],
+ ['FAT','Relatório de FAT e data book',null,()=>'Anexar ao embarque'],
+ ['IMPORT','Desembaraço de importação no destino','despI',()=>R.rota.id.startsWith('US')?'EUA: ISF 10+2 até 24 h antes do embarque':'Conforme o país']];
+const DOC_ETAPA={FAT:['FAT'],EMBALAGEM:['INVOICE','PACKING','ISPM15'],DUE:['NFE_DUE','CO'],GATE_IN:['VGM'],EMBARQUE:['SEGURO'],EBL:['EBL'],DESEMBARACO:['IMPORT']};
+const fB=n=>n>=1048576?nf(n/1048576,1)+' MB':n>=1024?nf(n/1024,0)+' kB':n+' B';
+function docsLocal(){
+  const inc=INCOTERMS[S.inc]; const V=k=>inc.v.includes(k); const pd=PJ();
+  if(!pd.docs) pd.docs={};
+  const emit=new Set(); for(let k=0;k<=S.ledgerK;k++) (DOC_ETAPA[ETAPAS[k][0]]||[]).forEach(x=>emit.add(x));
+  if(S.cotAprovada&&V('frete')) emit.add('BOOKING');
+  return DOC_DEF.map(([tipo,nome,comp])=>{
+    const st=pd.docs[tipo]||{};
+    const na=(tipo==='CO'&&!R.rota.co)||(comp&&!V(comp));
+    const status=st.status||(emit.has(tipo)&&!na?'EMITIDO':na?'NAO_APLICA':'PENDENTE');
+    return {tipo,nome,componente_pagador:comp,status,numero:st.numero||(status==='EMITIDO'&&!st.status?tipo+'-'+S.ref.slice(-7):null),
+      emitido_por:st.emitido_por||(status==='EMITIDO'&&!st.status?'coord.logistica@exportador.demo':null),emitido_em:st.emitido_em||null,versoes:st.versoes||[]};
+  });
+}
+function docsServidor(){
+  const arq=S.srv.arquivos||[];
+  return S.srv.documentos.map(d=>({...d,versoes:arq.filter(a=>a.tipo===d.tipo)}));
+}
+function ancorado(sha){
+  if(!S.srv||!sha) return null;
+  const b=S.srv.ledger.find(l=>l.dados&&l.dados.documentos_sha256&&Object.values(l.dados.documentos_sha256).includes(sha));
+  return b?b.seq:null;
+}
+function vDoc(){
+  const inc=INCOTERMS[S.inc], rota=R.rota; const V=k=>inc.v.includes(k);
+  const lista=S.srv?docsServidor():docsLocal(); const op=podeOperar();
+  const rotSt={EMITIDO:['ok','emitido'],PENDENTE:['at','pendente'],NAO_APLICA:['','responsabilidade do comprador']};
+  const emitidos=lista.filter(d=>d.status==='EMITIDO').length, aplic=lista.filter(d=>d.status!=='NAO_APLICA').length;
+  const docs=lista.map(d=>{
+    const def=DOC_DEF.find(x=>x[0]===d.tipo)||[d.tipo,d.nome,null,()=>''];
+    const resp=d.componente_pagador?(V(d.componente_pagador)?'Vendedor':'Comprador'):'Vendedor';
+    const [cl,rot]=rotSt[d.status]||['',d.status];
+    const vers=d.versoes.map((v,k)=>{const n=ancorado(v.sha256);
+      return `<li><span><b>v${v.versao}</b> ${esc(v.nome_arquivo)} · ${fB(v.tamanho)} · ${esc(v.enviado_por)} · ${new Date(v.enviado_em).toLocaleDateString('pt-BR')}${k===0?' <span class="tag ok">vigente</span>':''}${n?` <span class="tag">ancorado no bloco #${n}</span>`:''}</span>
+        <span class="hash" title="SHA-256 calculado pelo banco">${v.sha256.slice(0,16)}…</span>${S.srv?`<button class="btn mini" data-baixar="${d.tipo}:${v.versao}">Baixar</button>`:''}</li>`;}).join('');
+    return `<article class="doc ${d.status==='NAO_APLICA'?'na':''}">
+      <div class="doc-hd"><div><b>${esc(def[1]||d.nome)}</b><span class="peq muted">${resp} · ${def[3](V,rota)}</span></div><span class="tag ${cl}">${rot}</span></div>
+      ${d.status==='EMITIDO'?`<p class="peq">Nº <b>${esc(d.numero||'—')}</b>${d.emitido_por?' · emitido por '+esc(d.emitido_por):''}${d.emitido_em?' em '+new Date(d.emitido_em).toLocaleDateString('pt-BR'):''}</p>`:''}
+      ${vers?`<ul class="versoes">${vers}</ul>`:''}
+      ${op&&d.status!=='NAO_APLICA'?`<div class="doc-acoes">
+        ${d.status==='PENDENTE'?`<input class="doc-num" data-docnum="${d.tipo}" placeholder="Número do documento" aria-label="Número de ${esc(def[1])}"><button class="btn mini pri" data-emitir="${d.tipo}">Emitir</button>`:''}
+        <label class="btn mini">${d.versoes.length?'Nova versão':'Anexar arquivo'}<input type="file" hidden data-anexo="${d.tipo}" accept=".pdf,.png,.jpg,.jpeg,.xml,.xlsx,.docx"></label>
+      </div>`:''}
+    </article>`;}).join('');
+  const ncms=[...new Map(S.itens.map(i=>[i.ncm,i])).values()].map(i=>`<tr><td class="num">${i.ncm}</td><td>${esc(S.itens.filter(x=>x.ncm===i.ncm).map(x=>x.id).join(', '))}</td></tr>`).join('');
+  const pl=R.vols.map(v=>{const b=R.est.bins.find(x=>x.vols.includes(v)); return `<tr><td class="n">${v.seq}</td><td>${esc(v.tag)}${v.secoes>1?' — seção '+v.sec+'/'+v.secoes:''}</td><td class="num">${v.ncm}</td><td class="n">${v.cx.L}×${v.cx.W}×${v.cx.H}</td><td class="n">${nf(v.kg)}</td><td class="n">${nf(v.cx.bruto)}</td><td class="n">${nf(v.cx.m3,2)}</td><td>${b?b.num:''}</td></tr>`;}).join('');
+  return `<h1>Documentos e compliance</h1>
+  <p class="lead">Responsabilidades ajustadas ao Incoterm ${S.inc} para ${rota.nome}. ${emitidos} de ${aplic} documentos do vendedor emitidos.</p>
+  ${S.srv?'<div class="aviso ok"><b>Arquivos com prova de integridade</b>Cada anexo é guardado no PostgreSQL em versões imutáveis. O banco calcula o SHA-256, confere se o conteúdo corresponde ao tipo declarado, e o próximo evento do ledger ancora o hash vigente. No download, o navegador recalcula o hash e compara.</div>':'<div class="aviso"><b>Modo demonstração</b>Emissão e anexo funcionam aqui, mas o arquivo não é guardado: só o nome e o SHA-256 calculado no navegador. Com o banco, os arquivos ficam versionados e ancorados no ledger.</div>'}
+  <div class="docs">${docs}</div>
+  <div class="grid2">
+   <div class="painel"><h3>Classificação fiscal sugerida</h3><table><thead><tr><th>NCM</th><th>Itens</th></tr></thead><tbody>${ncms}</tbody></table>
+    <p class="peq muted">8537.10 = quadros até 1.000 V; 8537.20 = acima de 1.000 V. O kit de componentes deve ser desmembrado por item na fatura — um "kit" genérico costuma travar a conferência no destino.</p></div>
+   <div>
+    <div class="aviso"><b>Regime de exportação</b>Exportação imune de IPI, ICMS e PIS/Cofins. Avaliar drawback suspensão para insumos importados (disjuntores, CLPs, inversores) e o crédito do Reintegra vigente na data do embarque.</div>
+    <div class="aviso"><b>Mercadoria perigosa</b>Painéis com nobreak e baterias de chumbo ácido seladas podem exigir declaração IMDG; baterias de lítio tipo moeda em CLPs e IHMs normalmente se enquadram em isenção. Confirmar antes do booking.</div>
+    ${rota.id.startsWith('US')?`<div class="aviso crit"><b>EUA — sobretaxa em vigor</b>Sobretaxa Section 301 de 25% desde 22/07/2026 somada a 12,5% desde 24/07/2026; máquinas e equipamentos estão entre os itens atingidos. Mercadorias já embarcadas antes da vigência tiveram tratamento transitório — confirmar a regra aplicável na data do ETD.</div>`:''}
+   </div>
+  </div>
+  <h2>Packing list</h2>
+  <div class="painel rolar"><table><thead><tr><th class="n">Vol.</th><th>Descrição</th><th>NCM</th><th class="n">C×L×A mm</th><th class="n">Líquido kg</th><th class="n">Bruto kg</th><th class="n">m³</th><th>Contêiner</th></tr></thead><tbody>${pl}</tbody>
+  <tfoot><tr><td colspan="4">${R.vols.length} volumes em ${R.est.bins.length} contêiner(es)</td><td class="n">${nf(R.vols.reduce((a,v)=>a+v.kg,0))}</td><td class="n">${nf(R.vols.reduce((a,v)=>a+v.cx.bruto,0))}</td><td class="n">${nf(R.vols.reduce((a,v)=>a+v.cx.m3,0),1)}</td><td></td></tr></tfoot></table></div>`;
+}
+
+/* ===== 8. REFERÊNCIAS ===== */
+function vRef(){
+  return `<h1>Referências da pesquisa</h1>
+  <p class="lead">Base consultada em 26/09/2026 para calibrar o protótipo. Valores de frete por rota são estimativas derivadas do cenário de mercado — o índice Drewry mede rotas Leste–Oeste e não cotações Brasil–destino.</p>
+  <div class="painel"><ol class="fontes">
+   <li><b>Frete de contêiner.</b> Drewry World Container Index: US$ 4.468/40' em 24/09/2026; sobretaxas emergenciais de combustível desde agosto de 2026. <a href="https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry" target="_blank" rel="noopener">drewry.co.uk</a></li>
+   <li><b>Dessecante.</b> DIN 55474:2015 — fórmula n = (1/a)(V·b + m·c + A·e·WDD·t) e fatores por umidade final. <a href="https://www.din.de/en/wdc-beuth:din21:228004598" target="_blank" rel="noopener">din.de</a></li>
+   <li><b>Embalagem marítima.</b> IUMI — HPE, DIN 55473/55474, CTU Code, marcação DIN EN 55402 e ISO 780. <a href="https://iumi.com/uploads/Webinar/IUMI_Webinar_Effective_Packaging.pdf" target="_blank" rel="noopener">iumi.com</a>; especificação de seaworthy packing BHEL. <a href="https://bhel.com/sites/default/files/10-annexure_10_sea-worthy-packing-1608352674.pdf" target="_blank" rel="noopener">bhel.com</a></li>
+   <li><b>eBL e blockchain.</b> DCSA: meta de adoção digital total até 2030; lição da TradeLens encerrada em 2023. <a href="https://cyprus-mail.com/2025/10/10/from-paper-to-ebl-why-blockchain-matters-for-cyprus-shipping" target="_blank" rel="noopener">cyprus-mail.com</a>; padrão DCSA do B/L alinhado ao UN/CEFACT. <a href="https://cyprusshippingnews.com/2020/12/09/dcsa-publishes-standards-for-the-bill-of-lading/" target="_blank" rel="noopener">cyprusshippingnews.com</a></li>
+   <li><b>Tarifas EUA.</b> Section 301 de 25% (22/07/2026) + 12,5% (24/07/2026), máquinas e equipamentos atingidos. <a href="https://www.opovo.com.br/noticias/economia/2026/07/24/amp/tarifa-de-375-dos-eua-atinge-uss-66-bi-em-exportacoes-do-brasil.html" target="_blank" rel="noopener">Agência Brasil / O Povo</a></li>
+   <li><b>Câmbio.</b> PTAX média de setembro/2026 em torno de R$ 5,11. <a href="https://numerando.com.br/cambio/dolar-americano/2026" target="_blank" rel="noopener">numerando.com.br (BCB)</a></li>
+   <li><b>Porto de origem.</b> Portonave (Navegantes/SC), terceiro maior porto de contêineres do país, cais de 900 m. <a href="https://www.unisco.com/pt/international-ports/navegantes-brazil" target="_blank" rel="noopener">unisco.com</a></li>
+  </ol></div>
+  <div class="painel"><h3>Fluxo modelado</h3><p class="peq" style="margin:0">FAT → embalagem ISPM-15 com barreira e dessecante → marcação e SSCC → seleção de equipamento e plano de estufagem → cotação com Incoterm → booking → estufagem na fábrica e lacre → NF-e e DU-E → gate-in e VGM → embarque → eBL → chegada → desembaraço → entrega. Cada seta é um evento EPCIS no ledger.</p></div>`;
+}
+
+/* ===== EVENTOS ===== */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,tr[data-vol]'); if(!t) return;
+  if(t.dataset.grupo){const g=GRUPOS.find(x=>x.k===t.dataset.grupo); S.aba=S.ult[g.k]||g.abas[0][0]; render(); window.scrollTo(0,0); $('#main').focus({preventScroll:true}); return;}
+  if(t.dataset.aba){S.aba=t.dataset.aba; S.ult[grupoDe(S.aba).k]=S.aba; render(); window.scrollTo(0,0); $('#main').focus({preventScroll:true}); return;}
+  if(t.dataset.cfg!==undefined){$('#cfg').showModal(); return;}
+  if(t.dataset.fechar!==undefined){t.closest('dialog').close(); return;}
+  if(t.dataset.novo!==undefined){abrirNovo(); return;}
+  if(t.dataset.emitir){ emitirDoc(t.dataset.emitir); return; }
+  if(t.dataset.baixar){ const [tp,v]=t.dataset.baixar.split(':'); baixarDoc(tp,+v); return; }
+  if(t.id==='btnCriar'){criarEmbarque(); return;}
+  if(t.id==='btnEntrar'){entrar(); return;}
+  if(t.id==='btnDemo'){$('#telaLogin').hidden=true; toast('Modo demonstração: nada aqui altera o banco','ok'); return;}
+  if(t.id==='btnSair'){sair(); return;}
+  if(t.id==='btnUsuarios'){abrirUsuarios(); return;}
+  if(t.id==='btnUsrCriar'){criarUsuario(); return;}
+  if(t.dataset.usrsalvar){ const p=papeisMarcados(document.querySelector(`[data-papeis="${t.dataset.usrsalvar}"]`)); if(!p.length){toast('Marque ao menos um papel','crit'); return;} alterarUsuario(t.dataset.usrsalvar,{papeis:p},'Papéis atualizados'); return; }
+  if(t.dataset.usrativo){ const u=USR.lista.find(x=>x.id===t.dataset.usrativo); if(u.ativo&&!confirm(`Desativar ${u.nome}? As sessões abertas serão encerradas.`)) return; alterarUsuario(u.id,{ativo:!u.ativo},u.ativo?'Usuário desativado':'Usuário reativado'); return; }
+  if(t.dataset.usrsenha){ const u=USR.lista.find(x=>x.id===t.dataset.usrsenha); if(!confirm(`Gerar nova senha temporária para ${u.nome}? A atual deixa de valer.`)) return;
+    api(`/usuarios/${u.id}/senha`,{method:'POST'}).then(r=>{mostrarSenha(u.login,r.senha_temporaria); return api('/usuarios');}).then(l=>{USR.lista=l; desenharUsuarios();}).catch(e=>toast(e.message,'crit')); return; }
+  if(t.dataset.copiar){ navigator.clipboard?.writeText(t.dataset.copiar).then(()=>toast('Copiada','ok'),()=>toast('Selecione e copie manualmente','crit')); return; }
+  if(t.dataset.tema){S.tema=t.dataset.tema; aplicarTema(); render(); return;}
+  if(t.dataset.instalar!==undefined){if(pedidoInstalacao){pedidoInstalacao.prompt(); pedidoInstalacao.userChoice.finally(()=>{pedidoInstalacao=null; document.querySelectorAll('[data-instalar]').forEach(b=>b.hidden=true);});} return;}
+  if(t.dataset.vol){S.volSel=+t.dataset.vol; render(); return;}
+  if(t.dataset.proj){trocarProjeto(t.dataset.proj,+t.dataset.pid||0); return;}
+  if(t.dataset.del!==undefined){S.itens.splice(+t.dataset.del,1); render(); agendarSync('itens'); return;}
+  if(t.id==='btnAprovar'){ const nome=AUTH.on&&MODO==='servidor'?AUTH.user.login:(($('#inAprov')||{}).value||''); if(nome.trim().length<3){toast('Informe quem aprova (mín. 3 caracteres)','crit'); return;} if(!AUTH.on) S.usuario=nome.trim();
+    if(MODO==='servidor'){ const r=S.srv.cotacoes.find(c=>c.status==='RASCUNHO'); api(`/projetos/${S.pid}/cotacoes/${r.id}/aprovar`,{method:'POST',body:AUTH.on?{}:{aprovado_por:S.usuario}})
+      .then(()=>{toast('Cotação aprovada e gravada','ok'); return carregarProjetoSrv(S.pid);}).catch(e=>toast(e.message,'crit')).finally(render); }
+    else { S.cotAprovada=true; toast('Cotação aprovada (demonstração)','ok'); render(); } return; }
+  if(t.id==='btnAdd'){agendarSync('itens'); S.itens.push({id:'NOVO'+S.itens.length,nome:'Novo equipamento',tag:'EQ-'+(S.itens.length+1),qtd:1,secoes:1,L:800,W:600,H:2000,kg:250,valor:20000,ncm:'8537.10.90',emb:'crate',pilha:1}); render(); return;}
+  if(t.id==='btnReset'){const a=S.aba, tm=S.tema; S=PADRAO(); S.aba=a; S.tema=tm; fixarProxy(); popularFolha(); $('#cfg').close(); render(); return;}
+  if(t.id==='btnTema'){S.tema={auto:'light',light:'dark',dark:'auto'}[S.tema]||'auto'; aplicarTema(); render(); return;}
+  if(t.id==='bcNext'){
+    const prox=ETAPAS[S.ledgerK+1]; if(!prox) return;
+    if(prox[0]==='ESTUFAGEM'&&!S.cotAprovada){toast('INV-CMX-022: estufagem exige cotação aprovada','crit'); return;}
+    if(MODO==='servidor'){ const u=AUTH.on?AUTH.user.login:(($('#inUsuario')||{}).value||S.usuario||'').trim(); if(u.length<3){toast('Informe quem registra (mín. 3 caracteres)','crit'); return;} if(!AUTH.on) S.usuario=u;
+      api(`/projetos/${S.pid}/ledger`,{method:'POST',body:{registrado_por:u}}).then(ev=>{toast(`Bloco #${ev.seq} gravado — hash ${ev.hash.slice(0,12)}…`,'ok'); return carregarProjetoSrv(S.pid);})
+        .catch(e=>toast(e.message,'crit')).finally(render); }
+    else { S.ledgerK++; render(); } return; }
+  if(t.id==='bcVerif'){ api(`/projetos/${S.pid}/ledger/verificar`).then(v=>toast(v.integro?`Cadeia íntegra: ${v.blocos.length} blocos verificados no banco`:'Cadeia inválida no banco!',v.integro?'ok':'crit')).catch(e=>toast(e.message,'crit')); return; }
+  if(t.id==='bcTamper'){S.tamper=Math.max(1,Math.floor(S.ledgerK/2)); if(S.ledgerK<1) S.ledgerK=1; render(); return;}
+  if(t.id==='bcReset'){S.ledgerK=1; S.tamper=-1; render(); return;}
+});
+document.addEventListener('input',e=>{ if(e.target.id==='usrBusca'){ USR.busca=e.target.value.trim(); desenharUsuarios(); } });
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='selProj'){trocarProjeto(t.value); return;}
+  if(t.dataset.anexo){ const f=t.files&&t.files[0]; t.value=''; if(f) anexarDoc(t.dataset.anexo,f); return; }
+  if(t.id==='nvCli'){const c=NV.clientes.find(x=>x.nome.toLowerCase()===t.value.trim().toLowerCase()); if(c) $('#nvPais').value=c.pais||''; return;}
+  if(t.id==='inUsuario'){S.usuario=t.value.trim(); salvar(); return;}
+  if(t.dataset.it!==undefined){const it=S.itens[+t.dataset.it]; const f=t.dataset.f; it[f]=['nome','tag','ncm','emb'].includes(f)?t.value:Math.max(f==='qtd'?0:1,+t.value||0); render(); agendarSync('itens'); return;}
+  if(t.dataset.p){S.P[t.dataset.p]=t.dataset.p==='barreira'?t.value:+t.value; render(); const pr={}; for(const k in S.P) if(S.P[k]!==PARAM_PADRAO[k]) pr[k]=S.P[k]; agendarSync('proj','parametros',pr); return;}
+  const map={selRota:'rota',selInc:'inc',inFx:'fx',inSeg:'seg',inEnt:'entrega',inDia:'diaSaida',inRef:'ref',inCons:'consig'};
+  if(map[t.id]){S[map[t.id]]=['inFx','inSeg'].includes(t.id)?(+t.value||0):t.value; if(t.id!=='inRef'&&t.id!=='inCons') S.tamper=-1; render();
+    const campo={selRota:'rota_id',selInc:'incoterm',inFx:'cambio_usd_brl',inSeg:'seguro_pct',inEnt:'entrega_alvo',inDia:'dia_saida',inCons:'consignatario'}[t.id];
+    if(campo) agendarSync('proj',campo,['inFx','inSeg','inDia'].includes(t.id)?+t.value:t.value);}
+});
+(async function init(){
+  $('#cfg').addEventListener('click',e=>{if(e.target===$('#cfg')) $('#cfg').close();});
+  $('#selRota').innerHTML=ROTAS.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('');
+  $('#selInc').innerHTML=Object.keys(INCOTERMS).map(k=>`<option>${k}</option>`).join('');
+  popularFolha();
+  const q=new URLSearchParams(location.search).get('aba'); if(q&&[...GRUPOS.flatMap(g=>g.abas.map(x=>x[0]))].includes(q)) S.aba=q;
+  aplicarTema(); iniciarPWA(); render();
+  let jaTeveApi=false; try{ jaTeveApi=localStorage.getItem('gpscomex-api')==='1'; }catch(e){}
+  const demo=new URLSearchParams(location.search).has('demo');   // vindo do CTA da landing: demonstração sem login
+  if(demo){ history.replaceState(null,'',urlRetorno()); toast('Modo demonstração: nada aqui altera o banco','ok'); }
+  else if(await detectarServidor()){
+    try{localStorage.setItem('gpscomex-api','1');}catch(e){}
+    if(await iniciarAuth()) await conectarServidor();
+  }
+  else if(jaTeveApi) toast(navigator.onLine?'API indisponível — modo demonstração: alterações feitas agora não vão para o banco':'Sem conexão — modo demonstração: alterações feitas agora não vão para o banco','crit');
+})();
+</script></body></html>

@@ -1,0 +1,26 @@
+# Sem Traefik, tudo em localhost:
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#   App → http://localhost:8080 · Keycloak → http://localhost:8180 · PostgreSQL → localhost:5433
+services:
+  db:
+    ports: ["127.0.0.1:5433:5432"]
+  keycloak:
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_HOSTNAME: http://localhost:8180
+      COMEX_URL: http://localhost:8080
+    ports: ["127.0.0.1:8180:8080"]
+    labels: []
+    networks: [interna]
+  api:
+    environment:
+      OIDC_ISSUER: http://localhost:8180/realms/gplansis
+  web:
+    environment:
+      KEYCLOAK_ORIGIN: http://localhost:8180
+    ports: ["8080:80"]
+    labels: []
+    networks: [interna]
+networks:
+  proxy:
+    external: false
