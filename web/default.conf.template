@@ -1,6 +1,7 @@
 server {
   listen 80;
   server_name _;
+  server_tokens off;
   include /etc/nginx/conf.d/seguranca.inc;
   root /usr/share/nginx/html;
   index index.html;

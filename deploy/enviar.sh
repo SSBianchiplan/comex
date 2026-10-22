@@ -6,7 +6,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HOST=${HOST:?defina HOST=<servidor ssh>}; DIR=/opt/gplansis-comex
-rsync -az --delete --exclude .env --exclude '__pycache__' --exclude .pytest_cache --exclude .vscode --exclude .DS_Store ./ "$HOST:$DIR/"
+# sem --delete: nunca apaga no servidor o que não está aqui (backups, .env, arquivos locais)
+rsync -az --exclude .env --exclude '.env.*' --exclude .git --exclude .github --exclude '*.bak*' --exclude '__pycache__' --exclude .pytest_cache --exclude .vscode --exclude .DS_Store ./ "$HOST:$DIR/"
 ssh "$HOST" DIR="$DIR" bash -s <<'REMOTO'
 set -euo pipefail
 cd "$DIR"

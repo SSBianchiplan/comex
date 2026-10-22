@@ -123,7 +123,7 @@ web (nginx, PWA) ──/api──► api (FastAPI) ──► PostgreSQL 16 · sc
 
 ```bash
 docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d gpscomex -f /redteam/090_redteam.sql'   # 54 PASS / 0 FAIL
-API_URL=http://localhost:8000 pytest -q api/tests                                                 # 30 passed (banco recém-semeado)
+API_URL=http://localhost:8000 pytest -q api/tests                                                 # 38 passed (banco recém-semeado; rode o RED-TEAM antes)
 ```
 
 O RED-TEAM tenta violar cada invariante direto no banco e só passa se o erro citar a invariante esperada. Roda em transação desfeita. Os testes de API cobrem carteira, detalhe, simulação, recusas 409 com código INV, 404, CSV, fluxo de aprovação e evento, e o bloqueio de UPDATE no ledger pelo papel da aplicação. Os de autenticação (`test_auth.py`) usam um JWKS local, sem Keycloak: token válido, expirado, de outro emissor, de outra audiência e com assinatura falsa, filtro de papéis e autorização por papel.

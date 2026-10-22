@@ -1,4 +1,5 @@
 """Casos de uso. Toda escrita numa transação; invariantes garantidas pelo banco (P1)."""
+from starlette.concurrency import run_in_threadpool
 import json
 from datetime import datetime, timezone, timedelta
 from .db import fetch, fetch1, carregar_ref
@@ -17,7 +18,7 @@ async def calcular(conn, pid: int) -> dict:
     ref = await carregar_ref(conn)
     itens = await fetch(conn, 'SELECT * FROM item_carga WHERE projeto_id = %s ORDER BY ordem', pid)
     if not itens: raise ValueError('projeto sem itens de carga')
-    r = engine.calcular(p, itens, ref)
+    r = await run_in_threadpool(engine.calcular, p, itens, ref)   # cálculo pesado fora do laço de eventos
     congelado = (await fetch1(conn, 'SELECT congela_carga FROM ref_estado WHERE codigo = %s', p['estado']))['congela_carga']
     if r['est']['sem']: raise ValueError(f"{len(r['est']['sem'])} unidade(s) sem contêiner compatível — rever seções")
     if not congelado:

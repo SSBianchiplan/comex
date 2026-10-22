@@ -5,11 +5,13 @@ from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from starlette.concurrency import run_in_threadpool
+import logging
 import psycopg
 from psycopg.types.range import Range
 from .db import pool, fetch, fetch1, carregar_ref
 from . import servico, engine
-from .schemas import ProjetoIn, ProjetoPatch, ItemIn, ClienteIn, Aprovacao, EventoIn, DocumentoPatch, SimularIn, UsuarioIn, UsuarioPatch
+from .schemas import MAX_ITENS, _volumes, ProjetoIn, ProjetoPatch, ItemIn, ClienteIn, Aprovacao, EventoIn, DocumentoPatch, SimularIn, UsuarioIn, UsuarioPatch
 from fastapi import Depends
 from . import auth
 from .auth import Usuario, LER, OPERAR, LOGISTICA, COMERCIAL, ADMIN
@@ -31,7 +33,10 @@ if _origens:
 async def erro_banco(req: Request, e: psycopg.Error):
     diag = getattr(e, 'diag', None); estado = getattr(e, 'sqlstate', None)
     msg = (diag.message_primary if diag and diag.message_primary else str(e)).strip()
-    code = {'23514': 409, '23505': 409, '23503': 422, '23P01': 409, '42501': 403, '22P02': 422}.get(estado, 500)
+    code = {'23514': 409, '23505': 409, '23503': 422, '23P01': 409, '42501': 403, '22P02': 422, 'P0001': 409}.get(estado, 500)
+    if code == 500:   # erro interno: detalhes só no log, nunca para o cliente
+        logging.getLogger('comex').error('erro de banco %s em %s %s: %s', estado, req.method, req.url.path, msg)
+        return JSONResponse(status_code=500, content={'erro': 'erro interno no banco de dados'})
     return JSONResponse(status_code=code, content={'erro': msg, 'sqlstate': estado})
 @app.exception_handler(LookupError)
 async def nao_achado(req, e): return JSONResponse(status_code=404, content={'erro': str(e)})
@@ -44,6 +49,12 @@ def enc(o):
     if isinstance(o, Range): return {'inicio': o.lower, 'fim': o.upper}
     if isinstance(o, set): return sorted(o)
     raise TypeError(type(o))
+def csv_seguro(v):
+    """Neutraliza injeção de fórmula em planilhas (=, +, -, @, tab, CR no início da célula)."""
+    if isinstance(v, str) and v[:1] in ('=', '+', '-', '@', '\t', '\r'):
+        return "'" + v
+    return v
+
 def J(d, status=200): return JSONResponse(status_code=status, content=json.loads(json.dumps(d, default=enc)))
 
 @app.get('/api/saude')
@@ -120,6 +131,8 @@ async def gravar_itens(c, pid, itens: list[ItemIn]):
 
 @app.put('/api/projetos/{pid}/itens')
 async def substituir_itens(pid: int, itens: list[ItemIn], u: Usuario = Depends(OPERAR)):
+    if len(itens) > MAX_ITENS: raise ValueError(f'no máximo {MAX_ITENS} itens de carga')
+    _volumes(itens)
     async with pool.connection() as c, c.transaction():
         await auth.sessao(c, u)
         await servico.projeto_base(c, pid, lock=True)
@@ -208,9 +221,9 @@ async def packing_csv(pid: int, u: Usuario = Depends(LER)):
     buf = io.StringIO(); w = csv.writer(buf, delimiter=';')
     w.writerow(['Vol', 'TAG', 'Descrição', 'Seção', 'NCM', 'SSCC', 'C mm', 'L mm', 'A mm', 'Líquido kg', 'Tara kg', 'Bruto kg', 'm³', 'Contêiner', 'Tipo', 'Lacre'])
     for r in rows:
-        w.writerow([r['seq'], r['tag'], r['nome'], f"{r['secao_n']}/{r['secoes']}", r['ncm'], r['sscc'], r['ext_comp_mm'], r['ext_larg_mm'], r['ext_alt_mm'],
+        w.writerow([csv_seguro(x) for x in [r['seq'], r['tag'], r['nome'], f"{r['secao_n']}/{r['secoes']}", r['ncm'], r['sscc'], r['ext_comp_mm'], r['ext_larg_mm'], r['ext_alt_mm'],
                     f"{r['peso_liq_kg']:.1f}".replace('.', ','), f"{r['tara_kg']:.1f}".replace('.', ','), f"{r['peso_bruto_kg']:.1f}".replace('.', ','),
-                    f"{r['m3']:.3f}".replace('.', ','), r['conteiner'], r['tipo'], r['lacre']])
+                    f"{r['m3']:.3f}".replace('.', ','), r['conteiner'], r['tipo'], r['lacre']]])
     return StreamingResponse(iter(['\ufeff' + buf.getvalue()]), media_type='text/csv; charset=utf-8',
                              headers={'Content-Disposition': f'attachment; filename="packing-list-{p["codigo"]}.csv"'})
 
@@ -222,7 +235,7 @@ async def simular(x: SimularIn, u: Usuario = Depends(LER)):
     if x.incoterm not in ref.incoterms: raise ValueError(f'Incoterm {x.incoterm} inexistente')
     projeto = {**x.model_dump(exclude={'itens'}), 'id': 0}
     itens = [dict(i.model_dump(), ordem=n, id=None) for n, i in enumerate(x.itens, 1)]
-    r = engine.calcular(projeto, itens, ref)
+    r = await run_in_threadpool(engine.calcular, projeto, itens, ref)   # não trava o laço de eventos
     return J({'volumes': len(r['vols']), 'sem_conteiner': len(r['est']['sem']),
               'conteineres': [dict(tipo=b['T'], volumes=len(b['vols']), carga_kg=round(b['kg']), sobrealtura_mm=b['oh']) for b in r['est']['bins']],
               'cotacao': r['cot'], 'marcos': r['marcos']})

@@ -2,6 +2,7 @@
 
 AUTH_MODE=oidc      → exige Bearer token válido (assinatura via JWKS, iss, aud, exp).
 AUTH_MODE=desligado → desenvolvimento/demonstração: usuário local com todos os papéis.
+O padrão é oidc: sem AUTH_MODE definido, a API nunca fica aberta.
 O usuário e os papéis do token são gravados na transação (comex.usuario / comex.papeis),
 e o banco recusa aprovação ou evento em nome de outra pessoa (INV-CMX-024/025)."""
 import os, time
@@ -9,7 +10,9 @@ from dataclasses import dataclass, field
 import jwt
 from fastapi import Depends, HTTPException, Request
 
-MODO = os.getenv('AUTH_MODE', 'desligado').lower()
+MODO = (os.getenv('AUTH_MODE') or 'oidc').strip().lower()
+if MODO not in ('oidc', 'desligado'):
+    raise RuntimeError(f'AUTH_MODE inválido: {MODO!r} (use oidc ou desligado)')
 ISSUER = os.getenv('OIDC_ISSUER', '').rstrip('/')                 # público: o "iss" do token
 JWKS_URL = os.getenv('OIDC_JWKS_URL') or (ISSUER + '/protocol/openid-connect/certs' if ISSUER else '')  # pode ser interno
 AUDIENCE = os.getenv('OIDC_AUDIENCE', 'comex-api')

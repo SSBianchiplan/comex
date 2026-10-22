@@ -117,7 +117,7 @@ flowchart LR
 | API | Python 3.12, FastAPI, psycopg 3 + psycopg-pool, Pydantic v2, PyJWT |
 | Identidade | Keycloak 26 (OIDC, PKCE), tema de login próprio (FreeMarker) |
 | Interface | HTML, CSS e JavaScript sem build, PWA, fontes Barlow / Barlow Condensed / JetBrains Mono (Google Fonts) |
-| Servidor web | nginx 1.27 (template com CSP) |
+| Servidor web | nginx 1.30 (template com CSP) |
 | Implantação | Docker Compose; Caddy (produção atual) ou Traefik |
 | Testes | pytest + httpx (API, autenticação com JWKS local, gestão de usuários) e RED-TEAM em SQL |
 
@@ -152,7 +152,7 @@ Abra <http://localhost:8000/app.html>. `AUTH_MODE=desligado` é só para laborat
 ### Testes e RED-TEAM
 ```bash
 # API (com a API rodando e o banco recém-semeado)
-PYTHONPATH=api API_URL=http://localhost:8000 DATABASE_URL=$DATABASE_URL .venv/bin/pytest -q api/tests   # 30 passed
+PYTHONPATH=api API_URL=http://localhost:8000 DATABASE_URL=$DATABASE_URL .venv/bin/pytest -q api/tests   # 38 passed (30 de integração + 8 de segurança)
 
 # RED-TEAM: tenta violar cada invariante direto no banco (transação desfeita)
 psql -d gpscomex -f db/090_redteam.sql                                                                   # 54 PASS / 0 FAIL

@@ -26,7 +26,7 @@ services:
     networks: [interna]
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.7
+    image: quay.io/keycloak/keycloak:26.7.5   # ≥ 26.7.2 (CVE-2026-18963); migra o banco sozinho na subida
     restart: unless-stopped
     command: ["start", "--import-realm"]
     environment:
@@ -41,6 +41,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USER:-admin}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:?defina KC_ADMIN_PASSWORD no .env}
       COMEX_URL: ${COMEX_URL:-https://comex.localhost}            # usado no realm (redirect URIs)
+      COMEX_URL_DEV: ${COMEX_URL_DEV:-${COMEX_URL:-https://comex.localhost}}  # 2ª redirect URI (só desenvolvimento; em produção repete COMEX_URL)
       COMEX_SENHA_DEMO: ${COMEX_SENHA_DEMO:?defina COMEX_SENHA_DEMO no .env}  # senha temporária dos usuários demo
       COMEX_SENHA_ADMIN: ${COMEX_SENHA_ADMIN:?defina COMEX_SENHA_ADMIN no .env}  # senha temporária do admin master
       COMEX_ADMIN_EMAIL: ${COMEX_ADMIN_EMAIL:-admin@exemplo.com}  # login do admin master (realm)

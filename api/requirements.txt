@@ -1,8 +1,11 @@
-fastapi==0.115.*
-uvicorn[standard]==0.32.*
-psycopg[binary]==3.2.*
-psycopg-pool==3.2.*
-pydantic==2.*
-pyjwt[crypto]==2.*
-python-multipart==0.0.*
-httpx==0.27.*
+# Versões exatas (sem curingas): atualize de propósito, com pip-audit e os testes.
+fastapi==0.149.0
+starlette==1.9.0
+uvicorn[standard]==0.54.0
+psycopg[binary]==3.2.13
+psycopg-pool==3.2.8
+pydantic==2.14.1
+pyjwt[crypto]==2.15.1
+python-multipart==0.0.32
+httpx==0.28.1
+certifi==2026.10.19

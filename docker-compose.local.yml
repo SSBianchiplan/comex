@@ -9,6 +9,7 @@ services:
     environment:
       KC_HOSTNAME: http://localhost:8180
       COMEX_URL: http://localhost:8080
+      COMEX_URL_DEV: http://localhost:8000      # API + PWA pelo VS Code (F5)
     ports: ["127.0.0.1:8180:8080"]
     labels: []
     networks: [interna]

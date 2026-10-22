@@ -6,7 +6,7 @@
   "sslRequired": "external",
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
-  "resetPasswordAllowed": true,
+  "resetPasswordAllowed": false,
   "bruteForceProtected": true,
   "failureFactor": 5,
   "permanentLockout": false,
@@ -54,8 +54,7 @@
       "frontchannelLogout": true,
       "redirectUris": [
         "${COMEX_URL:http://localhost:8080}/*",
-        "http://localhost:8000/*",
-        "http://localhost:8080/*"
+        "${COMEX_URL_DEV:http://localhost:8080}/*"
       ],
       "webOrigins": [
         "+"

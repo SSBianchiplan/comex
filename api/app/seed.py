@@ -48,6 +48,12 @@ HORA = {'DUE': 15, 'EMBALAGEM': 17}
 
 async def semear():
     await pool.open()
+    try:
+        await _semear()
+    finally:
+        await pool.close()   # sem fechar o pool o processo não termina e o compose espera o seed para sempre
+
+async def _semear():
     async with pool.connection() as c:
         if (await fetch1(c, 'SELECT count(*) n FROM projeto'))['n']:
             print('seed: projetos já existem — nada a fazer'); return
@@ -74,7 +80,6 @@ async def semear():
                          datetime.combine(marcos[MARCO[etapa]], time(HORA.get(etapa, 10)), BRT)
                     await servico.registrar_evento(c, pid, etapa, 'coord.logistica@exportador.demo', min(ts, agora))
                 print(f"seed: {d['codigo']} → {calc['volumes']} volumes, {'+'.join(calc['conteineres'])}, até {d['ate']}")
-    await pool.close()
 
 if __name__ == '__main__':
     asyncio.run(semear())
